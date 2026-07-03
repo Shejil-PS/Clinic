@@ -8,7 +8,9 @@ import com.clinic.management.exception.DuplicateResourceException;
 import com.clinic.management.exception.ResourceNotFoundException;
 import com.clinic.management.mapper.PrescriptionMapper;
 import com.clinic.management.repository.PatientRepository;
+import com.clinic.management.repository.PatientRepository;
 import com.clinic.management.repository.PrescriptionRepository;
+import com.clinic.management.repository.TreatmentRepository;
 import com.clinic.management.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class PrescriptionService {
     private final PrescriptionMapper prescriptionMapper;
     private final PatientRepository patientRepository;
     private final VisitRepository visitRepository;
+    private final TreatmentRepository treatmentRepository;
     private final PdfGenerationService pdfGenerationService;
 
     public PrescriptionDTO createPrescription(PrescriptionDTO prescriptionDTO) {
@@ -116,6 +119,9 @@ public class PrescriptionService {
         variables.put("temp", visit.getTemperature() != null ? visit.getTemperature().toString() + " F" : "N/A");
         
         variables.put("medicines", prescription.getMedicineList());
+        
+        variables.put("treatments", treatmentRepository.findByVisitId(visit.getVisitId()));
+        
         variables.put("doctorName", visit.getDoctorName() != null ? visit.getDoctorName() : "Dr. Default");
 
         return pdfGenerationService.generatePdf("prescription-template", variables);

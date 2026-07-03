@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 public class TreatmentResponseDTO {
 
     private String id;
+    private String treatmentRecordId;
     private String treatmentId;
     private String visitId;
     private String patientId;
     private String treatmentName;
     private String toothNumber;
     private String status;
+    private Double cost;
     private String notes;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

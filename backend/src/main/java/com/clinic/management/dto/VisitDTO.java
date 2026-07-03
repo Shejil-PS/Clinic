@@ -38,6 +38,7 @@ public class VisitDTO {
     
     private String notes;
     private LocalDate followUpDate;
+    private String status;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

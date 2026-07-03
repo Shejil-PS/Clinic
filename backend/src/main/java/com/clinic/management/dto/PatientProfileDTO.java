@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PatientProfileDTO {
     private PatientDTO patientInfo;
-    private List<VisitDTO> visitHistory;
+    private VisitDTO currentVisit;
+    private List<VisitDTO> previousVisits;
     private List<TreatmentResponseDTO> treatmentHistory;
     private List<PrescriptionDTO> prescriptionHistory;
 }

@@ -54,6 +54,26 @@
         </tr>
     </table>
 
+    <h3>Treatments Performed</h3>
+    <table class="table-medicines" th:if="${treatments != null and !treatments.isEmpty()}">
+        <thead>
+            <tr>
+                <th>Treatment</th>
+                <th>Tooth Number</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="trt : ${treatments}">
+                <td th:text="${trt.treatmentName}"></td>
+                <td th:text="${trt.toothNumber}"></td>
+                <td th:text="${trt.status}"></td>
+                <td th:text="${trt.notes}"></td>
+            </tr>
+        </tbody>
+    </table>
+
     <h3>Medicines</h3>
     <table class="table-medicines">
         <thead>

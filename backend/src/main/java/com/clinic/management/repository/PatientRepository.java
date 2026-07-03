@@ -15,6 +15,8 @@ public interface PatientRepository extends MongoRepository<Patient, String> {
     Optional<Patient> findByPatientIdAndActiveTrue(String patientId);
     
     Optional<Patient> findByIdAndActiveTrue(String id);
+    
+    Optional<Patient> findByPhoneAndActiveTrue(String phone);
 
     Page<Patient> findByActiveTrue(Pageable pageable);
 

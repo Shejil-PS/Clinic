@@ -44,6 +44,8 @@ public class Visit {
     
     private String notes;
     private LocalDate followUpDate;
+    
+    private String status; // WAITING, CONSULTED
 
     @CreatedDate
     private LocalDateTime createdAt;

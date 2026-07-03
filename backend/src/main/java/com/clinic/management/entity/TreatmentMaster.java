@@ -16,33 +16,24 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "treatments")
-public class Treatment {
+@Document(collection = "treatment_masters")
+public class TreatmentMaster {
 
     @Id
     private String id;
 
     @Indexed(unique = true)
-    private String treatmentRecordId;
-
-    @Indexed
     private String treatmentId;
 
     @Indexed
-    private String visitId;
-
-    @Indexed
-    private String patientId;
-
     private String treatmentName;
     
-    private String toothNumber;
-    
-    private String status; // PLANNED, IN_PROGRESS, COMPLETED
+    private String description;
     
     private Double cost;
-    
-    private String notes;
+
+    @Builder.Default
+    private Boolean active = true;
 
     @CreatedDate
     private LocalDateTime createdAt;

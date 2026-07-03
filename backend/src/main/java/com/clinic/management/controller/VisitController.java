@@ -1,5 +1,8 @@
 package com.clinic.management.controller;
 
+import com.clinic.management.dto.PatientRegistrationDTO;
+import com.clinic.management.dto.FinishConsultationRequestDTO;
+import com.clinic.management.dto.VisitQueueDTO;
 import com.clinic.management.dto.VisitDTO;
 import com.clinic.management.dto.VisitRequestDTO;
 import com.clinic.management.service.VisitService;
@@ -9,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,32 @@ public class VisitController {
     @PostMapping
     public ResponseEntity<VisitDTO> createVisit(@Valid @RequestBody VisitRequestDTO visitRequestDTO) {
         return new ResponseEntity<>(visitService.createVisit(visitRequestDTO), HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/register")
+    public ResponseEntity<VisitDTO> registerConsultation(@Valid @RequestBody PatientRegistrationDTO registrationDTO) {
+        return new ResponseEntity<>(visitService.registerConsultation(registrationDTO), HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<VisitDTO> finishConsultation(
+            @PathVariable String id, 
+            @Valid @RequestBody FinishConsultationRequestDTO requestDTO) {
+        return ResponseEntity.ok(visitService.finishConsultation(id, requestDTO));
+    }
+    
+    @GetMapping("/queue")
+    public ResponseEntity<Page<VisitQueueDTO>> getConsultationQueue(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate date,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(visitService.getConsultationQueue(date, pageable));
     }
 
     @PutMapping("/{id}")

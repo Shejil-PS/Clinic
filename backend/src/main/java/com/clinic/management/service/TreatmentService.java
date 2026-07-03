@@ -6,6 +6,7 @@ import com.clinic.management.entity.Treatment;
 import com.clinic.management.exception.ResourceNotFoundException;
 import com.clinic.management.mapper.TreatmentMapper;
 import com.clinic.management.repository.PatientRepository;
+import com.clinic.management.repository.TreatmentMasterRepository;
 import com.clinic.management.repository.TreatmentRepository;
 import com.clinic.management.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class TreatmentService {
     private final TreatmentMapper treatmentMapper;
     private final PatientRepository patientRepository;
     private final VisitRepository visitRepository;
+    private final TreatmentMasterRepository treatmentMasterRepository;
 
     public TreatmentResponseDTO createTreatment(String visitId, String patientId, TreatmentRequestDTO requestDTO) {
         if (!visitRepository.findByVisitId(visitId).isPresent()) {
@@ -35,9 +37,14 @@ public class TreatmentService {
         }
 
         Treatment treatment = treatmentMapper.toEntity(requestDTO);
-        treatment.setTreatmentId(generateTreatmentId());
+        treatment.setTreatmentRecordId(generateTreatmentId());
         treatment.setVisitId(visitId);
         treatment.setPatientId(patientId);
+        
+        // Fetch cost from master if not provided or to ensure accuracy
+        treatmentMasterRepository.findByTreatmentId(requestDTO.getTreatmentId())
+                .ifPresent(master -> treatment.setCost(master.getCost()));
+                
         treatment.setCreatedAt(LocalDateTime.now());
         treatment.setUpdatedAt(LocalDateTime.now());
         
@@ -94,9 +101,9 @@ public class TreatmentService {
     }
 
     private String generateTreatmentId() {
-        return treatmentRepository.findTopByOrderByTreatmentIdDesc()
+        return treatmentRepository.findTopByOrderByTreatmentRecordIdDesc()
                 .map(treatment -> {
-                    String lastId = treatment.getTreatmentId(); // e.g. TRT000001
+                    String lastId = treatment.getTreatmentRecordId(); // e.g. TRT000001
                     int num = Integer.parseInt(lastId.substring(3));
                     return String.format("TRT%06d", num + 1);
                 })

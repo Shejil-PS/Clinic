@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TreatmentRequestDTO {
 
+    @NotBlank(message = "Treatment ID reference is required")
+    private String treatmentId;
+
     @NotBlank(message = "Treatment name is required")
     private String treatmentName;
     
@@ -19,6 +22,8 @@ public class TreatmentRequestDTO {
     
     @NotBlank(message = "Status is required")
     private String status;
+    
+    private Double cost;
     
     private String notes;
 }

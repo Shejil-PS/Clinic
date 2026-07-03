@@ -3,6 +3,7 @@ package com.clinic.management.service;
 import com.clinic.management.dto.PatientDTO;
 import com.clinic.management.dto.PatientProfileDTO;
 import com.clinic.management.entity.Patient;
+import com.clinic.management.entity.Visit;
 import com.clinic.management.exception.ResourceNotFoundException;
 import com.clinic.management.mapper.PatientMapper;
 import com.clinic.management.mapper.PrescriptionMapper;
@@ -17,7 +18,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,14 +83,28 @@ public class PatientService {
         Patient patient = patientRepository.findByPatientIdAndActiveTrue(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with patientId: " + patientId));
                 
+        List<Visit> allVisits = visitRepository.findByPatientId(patientId);
+        
+        Visit currentVisit = null;
+        List<Visit> previousVisits = new java.util.ArrayList<>();
+        
+        LocalDate today = LocalDate.now();
+        for (Visit visit : allVisits) {
+            if ("WAITING".equals(visit.getStatus()) || (visit.getVisitDate() != null && visit.getVisitDate().toLocalDate().equals(today))) {
+                currentVisit = visit; // Or the most recent waiting visit
+            } else {
+                previousVisits.add(visit);
+            }
+        }
+                
         return PatientProfileDTO.builder()
                 .patientInfo(patientMapper.toDto(patient))
-                .visitHistory(visitRepository.findByPatientId(patientId).stream()
-                        .map(visitMapper::toDto).toList())
+                .currentVisit(currentVisit != null ? visitMapper.toDto(currentVisit) : null)
+                .previousVisits(previousVisits.stream().map(visitMapper::toDto).collect(Collectors.toList()))
                 .treatmentHistory(treatmentRepository.findByPatientId(patientId).stream()
-                        .map(treatmentMapper::toResponseDto).toList())
+                        .map(treatmentMapper::toResponseDto).collect(Collectors.toList()))
                 .prescriptionHistory(prescriptionRepository.findByPatientId(patientId).stream()
-                        .map(prescriptionMapper::toDto).toList())
+                        .map(prescriptionMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 

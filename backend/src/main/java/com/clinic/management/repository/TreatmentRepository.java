@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface TreatmentRepository extends MongoRepository<Treatment, String> {
 
-    Optional<Treatment> findByTreatmentId(String treatmentId);
+    Optional<Treatment> findByTreatmentRecordId(String treatmentRecordId);
     
     Page<Treatment> findByVisitId(String visitId, Pageable pageable);
     
@@ -26,5 +26,5 @@ public interface TreatmentRepository extends MongoRepository<Treatment, String> 
     @Query("{ 'patientId': ?0, 'treatmentName': { $regex: ?1, $options: 'i' } }")
     Page<Treatment> searchTreatmentsByPatient(String patientId, String searchTerm, Pageable pageable);
 
-    Optional<Treatment> findTopByOrderByTreatmentIdDesc();
+    Optional<Treatment> findTopByOrderByTreatmentRecordIdDesc();
 }

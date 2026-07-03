@@ -6,27 +6,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "treatments")
-public class Treatment {
+@Document(collection = "bills")
+public class Bill {
 
     @Id
     private String id;
 
     @Indexed(unique = true)
-    private String treatmentRecordId;
-
-    @Indexed
-    private String treatmentId;
+    private String billNumber;
 
     @Indexed
     private String visitId;
@@ -34,19 +31,22 @@ public class Treatment {
     @Indexed
     private String patientId;
 
-    private String treatmentName;
+    private List<TreatmentDetail> treatmentDetails;
     
-    private String toothNumber;
+    private Double subtotal;
+    private Double discount;
+    private Double grandTotal;
     
-    private String status; // PLANNED, IN_PROGRESS, COMPLETED
-    
-    private Double cost;
-    
-    private String notes;
+    private String paymentStatus; // PENDING, PAID
 
     @CreatedDate
     private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TreatmentDetail {
+        private String treatmentName;
+        private Double cost;
+    }
 }

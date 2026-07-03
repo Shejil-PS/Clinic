@@ -27,6 +27,8 @@ public class Medicine {
 
     @Indexed
     private String medicineName;
+    
+    private String dosage;
 
     @Builder.Default
     private Boolean available = true;
