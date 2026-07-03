@@ -6,10 +6,13 @@ import com.clinic.management.exception.ResourceNotFoundException;
 import com.clinic.management.mapper.VisitMapper;
 import com.clinic.management.repository.PatientRepository;
 import com.clinic.management.repository.VisitRepository;
+import com.clinic.management.dto.VisitRequestDTO;
+import com.clinic.management.service.TreatmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -20,21 +23,42 @@ public class VisitService {
     private final VisitRepository visitRepository;
     private final VisitMapper visitMapper;
     private final PatientRepository patientRepository;
+    private final TreatmentService treatmentService;
 
-    public VisitDTO createVisit(VisitDTO visitDTO) {
-        if (!patientRepository.findByPatientIdAndActiveTrue(visitDTO.getPatientId()).isPresent()) {
-            throw new ResourceNotFoundException("Patient not found with patientId: " + visitDTO.getPatientId());
+    @Transactional
+    public VisitDTO createVisit(VisitRequestDTO visitRequestDTO) {
+        if (!patientRepository.findByPatientIdAndActiveTrue(visitRequestDTO.getPatientId()).isPresent()) {
+            throw new ResourceNotFoundException("Patient not found with patientId: " + visitRequestDTO.getPatientId());
         }
 
-        Visit visit = visitMapper.toEntity(visitDTO);
+        Visit visit = new Visit();
+        visit.setPatientId(visitRequestDTO.getPatientId());
+        visit.setDoctorName(visitRequestDTO.getDoctorName());
+        visit.setChiefComplaint(visitRequestDTO.getChiefComplaint());
+        visit.setDiagnosis(visitRequestDTO.getDiagnosis());
+        visit.setBloodPressure(visitRequestDTO.getBloodPressure());
+        visit.setPulseRate(visitRequestDTO.getPulseRate());
+        visit.setTemperature(visitRequestDTO.getTemperature());
+        visit.setHeight(visitRequestDTO.getHeight());
+        visit.setWeight(visitRequestDTO.getWeight());
+        visit.setNotes(visitRequestDTO.getNotes());
+        visit.setFollowUpDate(visitRequestDTO.getFollowUpDate());
+
         visit.setVisitId(generateVisitId());
-        if (visit.getVisitDate() == null) {
+        if (visitRequestDTO.getVisitDate() == null) {
             visit.setVisitDate(LocalDateTime.now());
+        } else {
+            visit.setVisitDate(visitRequestDTO.getVisitDate());
         }
         visit.setCreatedAt(LocalDateTime.now());
         visit.setUpdatedAt(LocalDateTime.now());
         
         Visit savedVisit = visitRepository.save(visit);
+
+        if (visitRequestDTO.getTreatments() != null && !visitRequestDTO.getTreatments().isEmpty()) {
+            treatmentService.createTreatmentsForVisit(savedVisit.getVisitId(), savedVisit.getPatientId(), visitRequestDTO.getTreatments());
+        }
+
         return visitMapper.toDto(savedVisit);
     }
 

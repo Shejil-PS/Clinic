@@ -1,6 +1,7 @@
 package com.clinic.management.controller;
 
 import com.clinic.management.dto.PatientDTO;
+import com.clinic.management.dto.PatientProfileDTO;
 import com.clinic.management.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,11 @@ public class PatientController {
     @GetMapping("/patient-id/{patientId}")
     public ResponseEntity<PatientDTO> getPatientByPatientId(@PathVariable String patientId) {
         return ResponseEntity.ok(patientService.getPatientByPatientId(patientId));
+    }
+    
+    @GetMapping("/profile/{patientId}")
+    public ResponseEntity<PatientProfileDTO> getPatientProfile(@PathVariable String patientId) {
+        return ResponseEntity.ok(patientService.getPatientProfile(patientId));
     }
 
     @GetMapping

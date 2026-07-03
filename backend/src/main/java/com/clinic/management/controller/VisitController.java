@@ -1,6 +1,7 @@
 package com.clinic.management.controller;
 
 import com.clinic.management.dto.VisitDTO;
+import com.clinic.management.dto.VisitRequestDTO;
 import com.clinic.management.service.VisitService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class VisitController {
     private final VisitService visitService;
 
     @PostMapping
-    public ResponseEntity<VisitDTO> createVisit(@Valid @RequestBody VisitDTO visitDTO) {
-        return new ResponseEntity<>(visitService.createVisit(visitDTO), HttpStatus.CREATED);
+    public ResponseEntity<VisitDTO> createVisit(@Valid @RequestBody VisitRequestDTO visitRequestDTO) {
+        return new ResponseEntity<>(visitService.createVisit(visitRequestDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
