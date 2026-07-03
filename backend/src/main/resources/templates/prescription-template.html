@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescription</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 20px; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 15px; margin-bottom: 20px; }
+        .clinic-name { font-size: 24px; font-weight: bold; color: #2c3e50; }
+        .details-section { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
+        .details-section td { padding: 8px; border: 1px solid #ddd; }
+        .label { font-weight: bold; color: #555; width: 150px; }
+        .table-medicines { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table-medicines th, .table-medicines td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .table-medicines th { background-color: #f8f9fa; color: #333; }
+        .footer { margin-top: 50px; text-align: right; font-weight: bold; }
+        .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="clinic-name" th:text="${clinicName}">Clinic Name</div>
+        <p>123 Medical Hub, Health Avenue, City - 123456</p>
+        <p>Phone: +1-234-567-8900 | Email: contact@clinic.com</p>
+    </div>
+
+    <h2>Prescription</h2>
+
+    <table class="details-section">
+        <tr>
+            <td class="label">Patient Name:</td>
+            <td th:text="${patientName}"></td>
+            <td class="label">Date:</td>
+            <td th:text="${visitDate}"></td>
+        </tr>
+        <tr>
+            <td class="label">Patient ID:</td>
+            <td th:text="${patientId}"></td>
+            <td class="label">Age / Gender:</td>
+            <td th:text="${age} + ' / ' + ${gender}"></td>
+        </tr>
+        <tr>
+            <td class="label">Diagnosis:</td>
+            <td colspan="3" th:text="${diagnosis}"></td>
+        </tr>
+        <tr>
+            <td class="label">Vitals:</td>
+            <td colspan="3">
+                BP: <span th:text="${bp}"></span> | 
+                Pulse: <span th:text="${pulse}"></span> | 
+                Temp: <span th:text="${temp}"></span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Medicines</h3>
+    <table class="table-medicines">
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Dosage</th>
+                <th>Duration</th>
+                <th>Qty</th>
+                <th>Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="med : ${medicines}">
+                <td th:text="${med.medicineName}"></td>
+                <td th:text="${med.dosage}"></td>
+                <td th:text="${med.duration}"></td>
+                <td th:text="${med.quantity}"></td>
+                <td th:text="${med.instruction}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Doctor: <span th:text="${doctorName}"></span></p>
+        <div class="signature-line"></div>
+        <p>Signature</p>
+    </div>
+
+</body>
+</html>
