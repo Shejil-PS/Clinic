@@ -20,10 +20,8 @@ public class PrescriptionDTO {
     private String id;
     private String prescriptionId;
 
-    @NotBlank(message = "Patient ID is required")
     private String patientId;
 
-    @NotBlank(message = "Visit ID is required")
     private String visitId;
 
     private LocalDateTime prescriptionDate;

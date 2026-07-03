@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Prescription</title>
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 20px; color: #333; }
@@ -55,7 +55,7 @@
     </table>
 
     <h3>Treatments Performed</h3>
-    <table class="table-medicines" th:if="${treatments != null and !treatments.isEmpty()}">
+    <table class="table-medicines" th:if="${not #lists.isEmpty(treatments)}">
         <thead>
             <tr>
                 <th>Treatment</th>
