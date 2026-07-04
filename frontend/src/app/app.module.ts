@@ -6,19 +6,21 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
 import { JwtInterceptor } from './core/auth/jwt.interceptor';
 import { LayoutComponent } from './components/layout/layout.component';
 import { MedicineMasterComponent } from './components/medicine-master/medicine-master.component';
 import { MedicineDialogComponent } from './components/medicine-master/medicine-dialog/medicine-dialog.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     LayoutComponent,
     MedicineMasterComponent,
-    MedicineDialogComponent
+    MedicineDialogComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +28,7 @@ import { MedicineDialogComponent } from './components/medicine-master/medicine-d
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     MaterialModule
   ],
   providers: [

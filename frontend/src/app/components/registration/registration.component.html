@@ -1,0 +1,97 @@
+<div class="page-container">
+  <h1 class="page-title">Consultation Registration</h1>
+
+  <mat-card class="glass-card registration-card">
+    
+    <!-- Step 1: Search Patient -->
+    <div class="search-section" *ngIf="!patientFound && !isNewPatient">
+      <h2>Search Patient</h2>
+      <p>Enter the patient's phone number to check if they are already registered.</p>
+      
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone Number</mat-label>
+          <input matInput [(ngModel)]="searchPhone" placeholder="Enter 10-digit phone number" (keyup.enter)="searchPatient()">
+          <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="search-btn" (click)="searchPatient()" [disabled]="!searchPhone || isLoading">
+          <mat-icon>search</mat-icon> Search
+        </button>
+      </div>
+
+      <div class="not-found" *ngIf="searchAttempted && !patientFound">
+        <p>No patient found with this phone number.</p>
+        <button mat-stroked-button color="primary" (click)="startNewRegistration()">Register New Patient</button>
+      </div>
+    </div>
+
+    <!-- Step 2A: Patient Found - Register Visit -->
+    <div class="patient-details-section" *ngIf="patientFound && existingPatient">
+      <div class="success-banner">
+        <mat-icon>check_circle</mat-icon> Patient Found!
+      </div>
+      
+      <div class="details-grid">
+        <div class="detail-item"><strong>Patient ID:</strong> {{ existingPatient.patientId }}</div>
+        <div class="detail-item"><strong>Name:</strong> {{ existingPatient.fullName }}</div>
+        <div class="detail-item"><strong>Phone:</strong> {{ existingPatient.phone }}</div>
+        <div class="detail-item"><strong>Age/Gender:</strong> {{ existingPatient.age }} / {{ existingPatient.gender }}</div>
+      </div>
+
+      <button mat-raised-button color="primary" class="action-btn" (click)="registerVisit(existingPatient.id!)" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Register Today's Visit</span>
+        <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
+      </button>
+      <button mat-button class="cancel-btn" (click)="resetSearch()">Cancel</button>
+    </div>
+
+    <!-- Step 2B: New Patient Registration -->
+    <div class="new-patient-section" *ngIf="isNewPatient">
+      <h2>Register New Patient</h2>
+      
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmitNewPatient()">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="fullName" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phone" required>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Age</mat-label>
+            <input matInput type="number" formControlName="age" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender" required>
+              <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+          <textarea matInput formControlName="address" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="resetSearch()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="registrationForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Register Patient & Visit</span>
+            <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </mat-card>
+</div>
