@@ -1,0 +1,47 @@
+<mat-sidenav-container class="app-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <div class="sidebar-header">
+      <mat-icon class="logo-icon">local_hospital</mat-icon>
+      <h2>Asha's Dental</h2>
+    </div>
+    
+    <mat-nav-list>
+      <a mat-list-item routerLink="/registration" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>person_add</mat-icon>
+        <div matListItemTitle>Registration</div>
+      </a>
+      
+      <a mat-list-item routerLink="/queue" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>queue</mat-icon>
+        <div matListItemTitle>Consultation Queue</div>
+      </a>
+      
+      <a mat-list-item routerLink="/consulted" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>check_circle</mat-icon>
+        <div matListItemTitle>Consulted Patients</div>
+      </a>
+      
+      <a mat-list-item routerLink="/medicine-master" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>medication</mat-icon>
+        <div matListItemTitle>Medicine Master</div>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="top-toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="spacer"></span>
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </mat-toolbar>
+    
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

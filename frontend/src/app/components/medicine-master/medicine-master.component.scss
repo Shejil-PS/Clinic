@@ -1,0 +1,76 @@
+.page-container {
+  padding: 10px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.search-field {
+  width: 300px;
+  
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background-color: white;
+    border-radius: 8px;
+  }
+}
+
+.add-btn {
+  height: 56px;
+  border-radius: 8px;
+  padding: 0 24px;
+}
+
+.table-card {
+  position: relative;
+  min-height: 400px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-data-cell {
+  padding: 24px;
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+th.mat-header-cell {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+}

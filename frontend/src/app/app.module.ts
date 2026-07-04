@@ -9,10 +9,16 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
 import { JwtInterceptor } from './core/auth/jwt.interceptor';
+import { LayoutComponent } from './components/layout/layout.component';
+import { MedicineMasterComponent } from './components/medicine-master/medicine-master.component';
+import { MedicineDialogComponent } from './components/medicine-master/medicine-dialog/medicine-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    LayoutComponent,
+    MedicineMasterComponent,
+    MedicineDialogComponent
   ],
   imports: [
     BrowserModule,

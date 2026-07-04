@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{data ? 'Edit' : 'Add'}} Medicine</h2>
+<mat-dialog-content>
+  <form [formGroup]="medicineForm" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Medicine Name</mat-label>
+      <input matInput formControlName="medicineName" required>
+      <mat-error *ngIf="medicineForm.get('medicineName')?.hasError('required')">Medicine name is required</mat-error>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Default Dosage</mat-label>
+      <input matInput formControlName="dosage" placeholder="Ex: 1-0-1" required>
+      <mat-error *ngIf="medicineForm.get('dosage')?.hasError('required')">Dosage is required</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="medicineForm.invalid" (click)="save()">Save</button>
+</mat-dialog-actions>

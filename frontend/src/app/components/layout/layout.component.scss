@@ -1,0 +1,72 @@
+.app-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 260px;
+  background-color: #2c3e50;
+  color: #fff;
+}
+
+.sidebar-header {
+  padding: 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+  
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .logo-icon {
+    font-size: 28px;
+    height: 28px;
+    width: 28px;
+  }
+}
+
+.mat-mdc-list-item {
+  color: #bdc3c7 !important;
+  border-radius: 0 24px 24px 0;
+  margin-right: 16px;
+  margin-bottom: 4px;
+  
+  .mat-icon {
+    color: #bdc3c7;
+  }
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff !important;
+    .mat-icon { color: #fff; }
+  }
+}
+
+.active-link {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-left: 4px solid #3498db;
+  
+  .mat-icon { color: #3498db; }
+}
+
+.top-toolbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 2;
+  position: relative;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.main-content {
+  padding: 24px;
+  height: calc(100vh - 112px);
+  overflow-y: auto;
+}
