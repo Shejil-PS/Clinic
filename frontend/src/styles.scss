@@ -1,0 +1,65 @@
+/* Premium Clinic Theme Setup */
+
+// Import Material theming
+@use '@angular/material' as mat;
+
+// Include the common styles for Angular Material.
+@include mat.core();
+
+// Define a premium, clinical color palette.
+$clinic-primary: mat.define-palette(mat.$teal-palette, 500, 300, 700);
+$clinic-accent: mat.define-palette(mat.$blue-grey-palette, A200, A100, A400);
+$clinic-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A light theme for a clean clinic feel.
+$clinic-theme: mat.define-light-theme((
+  color: (
+    primary: $clinic-primary,
+    accent: $clinic-accent,
+    warn: $clinic-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+@include mat.all-component-themes($clinic-theme);
+
+// --- GLOBAL STYLES & GLASSMORPHISM ---
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+    background-color: #f4f7f6;
+}
+
+// Smooth scrolling
+html {
+    scroll-behavior: smooth;
+}
+
+// Custom Glass Card Class
+.glass-card {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+// Custom button animations
+.mat-mdc-button, .mat-mdc-raised-button {
+    border-radius: 8px !important;
+    transition: all 0.2s ease-in-out !important;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    }
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// Dynamic Input Styling
+.mat-mdc-form-field {
+    width: 100%;
+}
