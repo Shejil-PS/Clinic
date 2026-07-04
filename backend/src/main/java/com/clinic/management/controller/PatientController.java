@@ -49,6 +49,11 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatientByPatientId(patientId));
     }
     
+    @GetMapping("/phone/{phone}")
+    public ResponseEntity<PatientDTO> getPatientByPhone(@PathVariable String phone) {
+        return ResponseEntity.ok(patientService.getPatientByPhone(phone));
+    }
+    
     @GetMapping("/profile/{patientId}")
     public ResponseEntity<PatientProfileDTO> getPatientProfile(@PathVariable String patientId) {
         return ResponseEntity.ok(patientService.getPatientProfile(patientId));

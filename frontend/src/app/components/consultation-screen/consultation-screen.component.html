@@ -2,7 +2,10 @@
   <div class="page-header">
     <button mat-icon-button routerLink="/queue"><mat-icon>arrow_back</mat-icon></button>
     <h1 class="page-title">Consultation</h1>
-    
+    <div style="flex: 1"></div>
+    <button mat-stroked-button color="primary" (click)="saveDraft()" [disabled]="isLoading || visit.status === 'CONSULTED'" style="margin-right: 16px;">
+      <mat-icon>save</mat-icon> Save Draft
+    </button>
     <button mat-raised-button color="accent" (click)="finishConsultation()" [disabled]="isLoading || visit.status === 'CONSULTED'">
       <mat-icon>done_all</mat-icon> Finish Consultation
     </button>
@@ -32,23 +35,25 @@
       <h2>Dental Treatments</h2>
       <div class="add-section">
         <mat-form-field appearance="outline">
-          <mat-label>Select Treatment</mat-label>
-          <mat-select [(ngModel)]="selectedTreatmentId">
-            <mat-option *ngFor="let t of availableTreatments" [value]="t.id">{{t.treatmentName}}</mat-option>
-          </mat-select>
+          <mat-label>Search or Enter Treatment</mat-label>
+          <input type="text" matInput [(ngModel)]="treatmentSearch" [matAutocomplete]="autoTreatment">
+          <mat-autocomplete #autoTreatment="matAutocomplete">
+            <mat-option *ngFor="let t of filteredTreatments" [value]="t.treatmentName">
+              {{t.treatmentName}}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Notes</mat-label>
           <input matInput [(ngModel)]="treatmentNotes">
         </mat-form-field>
-        <button mat-stroked-button color="primary" (click)="addTreatment()" [disabled]="!selectedTreatmentId">Add Treatment</button>
+        <button mat-stroked-button color="primary" (click)="addTreatment()" [disabled]="!treatmentSearch">Add Treatment</button>
       </div>
 
-      <!-- Ideally table of added treatments here -->
       <mat-list>
         <mat-list-item *ngFor="let t of addedTreatments">
           <mat-icon matListItemIcon>medical_services</mat-icon>
-          <div matListItemTitle>Treatment Added</div>
+          <div matListItemTitle>{{t.treatmentName}}</div>
           <div matListItemLine>{{t.notes}}</div>
         </mat-list-item>
       </mat-list>
@@ -59,23 +64,26 @@
       <h2>Prescriptions</h2>
       <div class="add-section">
         <mat-form-field appearance="outline">
-          <mat-label>Select Medicine</mat-label>
-          <mat-select [(ngModel)]="selectedMedicineId">
-            <mat-option *ngFor="let m of availableMedicines" [value]="m.id">{{m.medicineName}}</mat-option>
-          </mat-select>
+          <mat-label>Search or Enter Medicine</mat-label>
+          <input type="text" matInput [(ngModel)]="medicineSearch" [matAutocomplete]="autoMedicine">
+          <mat-autocomplete #autoMedicine="matAutocomplete">
+            <mat-option *ngFor="let m of filteredMedicines" [value]="m.medicineName">
+              {{m.medicineName}}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Instructions</mat-label>
           <input matInput [(ngModel)]="medicineInstructions">
         </mat-form-field>
-        <button mat-stroked-button color="primary" (click)="addPrescription()" [disabled]="!selectedMedicineId">Add Medicine</button>
+        <button mat-stroked-button color="primary" (click)="addPrescription()" [disabled]="!medicineSearch">Add Medicine</button>
       </div>
 
       <mat-list>
         <mat-list-item *ngFor="let p of addedPrescriptions">
           <mat-icon matListItemIcon>medication</mat-icon>
-          <div matListItemTitle>Medicine Prescribed</div>
-          <div matListItemLine>{{p.instructions}}</div>
+          <div matListItemTitle>{{p.medicineName}}</div>
+          <div matListItemLine>{{p.instruction}}</div>
         </mat-list-item>
       </mat-list>
     </mat-card>

@@ -1,5 +1,10 @@
 <div class="page-container">
-  <h1 class="page-title">Consultation Registration</h1>
+  <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1 class="page-title" style="margin: 0;">Consultation Registration</h1>
+    <button mat-raised-button color="accent" (click)="exportAllPatientsToCsv()" [disabled]="isExporting">
+      <mat-icon>download</mat-icon> Export All Patients
+    </button>
+  </div>
 
   <mat-card class="glass-card registration-card">
     

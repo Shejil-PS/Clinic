@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Patient, Visit } from '../models/patient.model';
 
 @Injectable({
@@ -20,21 +21,38 @@ export class ConsultationService {
     return this.http.post<Patient>(this.patientUrl, patient);
   }
 
+  getAllPatients(): Observable<Patient[]> {
+    let params = new HttpParams().set('size', '100000');
+    return this.http.get<any>(this.patientUrl, { params }).pipe(
+      map(response => response.content || response)
+    );
+  }
+
   registerVisit(patientId: string): Observable<Visit> {
     return this.http.post<Visit>(this.visitUrl, { patientId });
   }
 
   getVisitsByDate(dateStr: string): Observable<any[]> {
     let params = new HttpParams().set('date', dateStr);
-    return this.http.get<any[]>(`${this.visitUrl}/date`, { params });
+    return this.http.get<any>(`${this.visitUrl}/queue`, { params }).pipe(
+      map(response => response.content || response)
+    );
   }
 
   getVisitById(visitId: string): Observable<Visit> {
     return this.http.get<Visit>(`${this.visitUrl}/${visitId}`);
   }
 
-  finishConsultation(visitId: string): Observable<any> {
-    return this.http.post(`${this.visitUrl}/${visitId}/finish`, {});
+  finishConsultation(visitId: string, payload: any): Observable<any> {
+    return this.http.post(`${this.visitUrl}/${visitId}/finish`, payload);
+  }
+
+  getBillByVisitId(visitId: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/v1/bills/visit/${visitId}`);
+  }
+
+  getPrescriptionByVisitId(visitId: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/v1/prescriptions/visit/${visitId}`);
   }
 
   addPrescription(prescription: any): Observable<any> {

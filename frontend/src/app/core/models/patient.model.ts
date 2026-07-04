@@ -22,4 +22,6 @@ export interface VisitDTO {
   patientName: string;
   visitDate: string;
   status: string;
+  visitStatus?: string;
+  doctorName?: string;
 }

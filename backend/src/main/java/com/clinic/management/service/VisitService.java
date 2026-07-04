@@ -85,7 +85,7 @@ public class VisitService {
     }
 
     public VisitDTO updateVisit(String id, VisitDTO visitDTO) {
-        Visit existingVisit = visitRepository.findById(id)
+        Visit existingVisit = visitRepository.findByVisitId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + id));
 
         if (!existingVisit.getPatientId().equals(visitDTO.getPatientId())) {
@@ -102,14 +102,13 @@ public class VisitService {
     }
 
     public void deleteVisit(String id) {
-        if (!visitRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Visit not found with id: " + id);
-        }
-        visitRepository.deleteById(id);
+        Visit existingVisit = visitRepository.findByVisitId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + id));
+        visitRepository.delete(existingVisit);
     }
 
     public VisitDTO getVisitById(String id) {
-        Visit visit = visitRepository.findById(id)
+        Visit visit = visitRepository.findByVisitId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + id));
         return visitMapper.toDto(visit);
     }
@@ -189,7 +188,7 @@ public class VisitService {
 
     @Transactional
     public VisitDTO finishConsultation(String id, FinishConsultationRequestDTO requestDTO) {
-        Visit visit = visitRepository.findById(id)
+        Visit visit = visitRepository.findByVisitId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + id));
 
         // 1. Update Visit details

@@ -81,7 +81,7 @@ export class RegistrationComponent {
       this.consultationService.registerPatient(newPatient).subscribe({
         next: (patient) => {
           // Immediately register a visit for the new patient
-          this.registerVisit(patient.id!);
+          this.registerVisit(patient.patientId!);
         },
         error: () => {
           this.showError('Failed to register patient');
@@ -112,5 +112,58 @@ export class RegistrationComponent {
 
   private showError(message: string) {
     this.snackBar.open(message, 'Close', { duration: 4000, panelClass: 'error-snackbar' });
+  }
+
+  isExporting: boolean = false;
+  
+  exportAllPatientsToCsv() {
+    this.isExporting = true;
+    this.snackBar.open('Fetching all patients for export...', 'Close', { duration: 2000 });
+    
+    this.consultationService.getAllPatients().subscribe({
+      next: (patients) => {
+        if (!patients || patients.length === 0) {
+          this.snackBar.open('No patients found in database.', 'Close', { duration: 3000 });
+          this.isExporting = false;
+          return;
+        }
+
+        const csvRows = [];
+        // Headers
+        csvRows.push(['Patient ID', 'Full Name', 'Phone', 'Age', 'Gender', 'Address'].join(','));
+        
+        // Rows
+        for (const p of patients) {
+          const values = [
+            p.patientId,
+            `"${p.fullName}"`,
+            p.phone,
+            p.age,
+            p.gender,
+            `"${p.address || ''}"`
+          ];
+          csvRows.push(values.join(','));
+        }
+        
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `all_patients_export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        this.snackBar.open(`Exported ${patients.length} patients successfully!`, 'Close', { duration: 3000, panelClass: 'success-snackbar' });
+        this.isExporting = false;
+      },
+      error: () => {
+        this.showError('Failed to fetch patients for export');
+        this.isExporting = false;
+      }
+    });
   }
 }

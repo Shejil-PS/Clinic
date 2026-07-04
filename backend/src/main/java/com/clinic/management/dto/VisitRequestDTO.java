@@ -22,7 +22,6 @@ public class VisitRequestDTO {
 
     private LocalDateTime visitDate;
     
-    @NotBlank(message = "Doctor name is required")
     private String doctorName;
     
     private String chiefComplaint;

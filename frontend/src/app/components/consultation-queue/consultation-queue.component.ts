@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 import { ConsultationService } from '../../core/services/consultation.service';
+import { DateFilterService } from '../../core/services/date-filter.service';
 import { VisitDTO } from '../../core/models/patient.model';
 
 @Component({
@@ -10,30 +12,33 @@ import { VisitDTO } from '../../core/models/patient.model';
   templateUrl: './consultation-queue.component.html',
   styleUrls: ['./consultation-queue.component.scss']
 })
-export class ConsultationQueueComponent implements OnInit {
+export class ConsultationQueueComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['patientId', 'patientName', 'status', 'actions'];
   dataSource!: MatTableDataSource<VisitDTO>;
   isLoading = false;
   
-  selectedDate: string;
+  selectedDate: string = '';
+  private dateSub!: Subscription;
 
   constructor(
     private consultationService: ConsultationService,
+    private dateFilterService: DateFilterService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    // Default to today
-    const today = new Date();
-    this.selectedDate = today.toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
-    this.loadQueue();
+    this.dateSub = this.dateFilterService.selectedDate$.subscribe(date => {
+      this.selectedDate = date;
+      this.loadQueue();
+    });
   }
 
-  onDateChange(event: any) {
-    this.selectedDate = event.target.value;
-    this.loadQueue();
+  ngOnDestroy(): void {
+    if (this.dateSub) {
+      this.dateSub.unsubscribe();
+    }
   }
 
   loadQueue() {

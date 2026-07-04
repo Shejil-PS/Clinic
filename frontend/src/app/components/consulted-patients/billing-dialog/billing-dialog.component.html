@@ -1,42 +1,125 @@
-<h2 mat-dialog-title>Generate Bill</h2>
-<mat-dialog-content>
-  <div class="patient-info">
-    <p><strong>Patient:</strong> {{data.patientName}} ({{data.patientId}})</p>
-    <p><strong>Visit ID:</strong> {{data.visitId}}</p>
+<div class="no-print">
+  <h2 mat-dialog-title>Generate Bill</h2>
+  <mat-dialog-content>
+    <div class="patient-info">
+      <p><strong>Patient:</strong> {{data.patientName}} ({{data.patientId}})</p>
+      <p><strong>Visit ID:</strong> {{data.visitId}}</p>
+    </div>
+    
+    <form [formGroup]="billForm" class="bill-form">
+      <div class="fees-section">
+        <h3>Charges</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Consultation Fee (Rs)*</mat-label>
+          <input matInput type="number" formControlName="consultationFee" (input)="calculateTotal()">
+        </mat-form-field>
+        
+        <div class="calculated-info" *ngIf="treatmentDetails.length > 0" style="margin-bottom: 15px;">
+          <p style="margin: 0; color: #2c3e50;"><strong>Auto-calculated Treatment Charges:</strong> Rs. {{totalTreatmentCost}}</p>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Medicines Charges (Rs)*</mat-label>
+          <input matInput type="number" formControlName="medicineCharges" (input)="calculateTotal()">
+        </mat-form-field>
+      </div>
+
+      <div class="total-section">
+        <h3>Total Amount: Rs. {{totalAmount}}</h3>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="billForm.invalid" (click)="saveBill()">
+      <mat-icon>save</mat-icon> Save & Print Bill
+    </button>
+  </mat-dialog-actions>
+</div>
+
+<!-- Print Section -->
+<div id="print-section">
+  <div class="print-header" style="text-align: center; font-family: serif; color: #153c61; margin-bottom: 20px;">
+    <h1 style="margin: 0; font-size: 32px; font-weight: bold;">Dr. ASHA'S DENTAL CLINIC</h1>
+    <h3 style="margin: 5px 0 2px; color: #1e8470; font-size: 16px;">CHUNGAM, SULTHAN BATHERY, WAYANAD</h3>
+    <p style="margin: 0; color: #333; font-size: 14px;">Ph: 9447633163</p>
   </div>
   
-  <form [formGroup]="billForm" class="bill-form">
-    <div class="fees-section">
-      <h3>Charges</h3>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Consultation Fee (Rs)</mat-label>
-        <input matInput type="number" formControlName="consultationFee" (input)="calculateTotal()">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Treatment Charges (Rs)</mat-label>
-        <input matInput type="number" formControlName="treatmentCharges" (input)="calculateTotal()">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Medicines Charges (Rs)</mat-label>
-        <input matInput type="number" formControlName="medicineCharges" (input)="calculateTotal()">
-      </mat-form-field>
-      
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Discount (Rs)</mat-label>
-        <input matInput type="number" formControlName="discount" (input)="calculateTotal()">
-      </mat-form-field>
+  <div class="print-details" style="font-size: 12px; margin-bottom: 20px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; justify-content: space-between;">
+    <div>
+      <p style="margin: 3px 0;"><strong>Name:</strong> {{data.patientName}}</p>
+      <p style="margin: 3px 0;"><strong>Doctor:</strong> {{data.doctorName || 'Dr. Asha'}}</p>
     </div>
-
-    <div class="total-section">
-      <h3>Total Amount: Rs. {{totalAmount}}</h3>
+    <div style="text-align: right;">
+      <p style="margin: 3px 0;"><strong>Date:</strong> {{currentDate | date:'dd/MM/yyyy'}}</p>
+      <p style="margin: 3px 0;"><strong>Bill No:</strong> {{data.visitId}}</p>
     </div>
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="billForm.invalid" (click)="saveBill()">
-    <mat-icon>receipt_long</mat-icon> Save & Print Bill
-  </button>
-</mat-dialog-actions>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
+    <thead>
+      <tr style="border-bottom: 1px solid #ccc; text-align: left;">
+        <th style="padding: 8px 0;">Slno</th>
+        <th style="padding: 8px 0;">Service Name</th>
+        <th style="padding: 8px 0; text-align: center;">Qty</th>
+        <th style="padding: 8px 0; text-align: right;">Gross</th>
+        <th style="padding: 8px 0; text-align: right;">Net Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 0;">1</td>
+        <td style="padding: 8px 0;">CONSULTATION CHARGE</td>
+        <td style="padding: 8px 0; text-align: center;">1</td>
+        <td style="padding: 8px 0; text-align: right;">{{billForm.value.consultationFee}}</td>
+        <td style="padding: 8px 0; text-align: right;">{{billForm.value.consultationFee}}</td>
+      </tr>
+      <tr *ngFor="let t of treatmentDetails; let i = index">
+        <td style="padding: 8px 0;">{{i + 2}}</td>
+        <td style="padding: 8px 0;">{{t.treatmentName}}</td>
+        <td style="padding: 8px 0; text-align: center;">1</td>
+        <td style="padding: 8px 0; text-align: right;">{{t.cost}}</td>
+        <td style="padding: 8px 0; text-align: right;">{{t.cost}}</td>
+      </tr>
+      <tr *ngIf="billForm.value.medicineCharges > 0">
+        <td style="padding: 8px 0;">{{treatmentDetails.length + 2}}</td>
+        <td style="padding: 8px 0;">MEDICINE CHARGES</td>
+        <td style="padding: 8px 0; text-align: center;">1</td>
+        <td style="padding: 8px 0; text-align: right;">{{billForm.value.medicineCharges}}</td>
+        <td style="padding: 8px 0; text-align: right;">{{billForm.value.medicineCharges}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="print-totals" style="font-size: 12px; margin-bottom: 20px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; justify-content: space-between;">
+    <div>
+      <p style="margin: 3px 0;"><strong>Total Gross:</strong> {{totalAmount}}</p>
+    </div>
+    <div>
+      <p style="margin: 3px 0;"><strong>Total Amount:</strong> {{totalAmount}}</p>
+    </div>
+    <div>
+      <p style="margin: 3px 0;"><strong>Amount Paid:</strong> {{totalAmount}}</p>
+    </div>
+  </div>
+
+  <div class="print-medicines" *ngIf="medicineDetails.length > 0" style="font-size: 12px; margin-top: 15px;">
+    <h4 style="margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;">Prescribed Medicines</h4>
+    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+      <thead>
+        <tr style="border-bottom: 1px solid #ccc; text-align: left;">
+          <th style="padding: 6px 0; width: 10%;">Slno</th>
+          <th style="padding: 6px 0; width: 40%;">Medicine Name</th>
+          <th style="padding: 6px 0; width: 50%;">Instructions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of medicineDetails; let i = index">
+          <td style="padding: 6px 0;">{{i + 1}}</td>
+          <td style="padding: 6px 0;"><strong>{{m.medicineName}}</strong></td>
+          <td style="padding: 6px 0; color: #555;"><em>{{m.instruction || 'As directed by physician'}}</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

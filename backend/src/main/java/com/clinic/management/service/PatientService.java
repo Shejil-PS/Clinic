@@ -79,6 +79,12 @@ public class PatientService {
         return patientMapper.toDto(patient);
     }
     
+    public PatientDTO getPatientByPhone(String phone) {
+        Patient patient = patientRepository.findByPhoneAndActiveTrue(phone)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with phone number: " + phone));
+        return patientMapper.toDto(patient);
+    }
+    
     public PatientProfileDTO getPatientProfile(String patientId) {
         Patient patient = patientRepository.findByPatientIdAndActiveTrue(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with patientId: " + patientId));

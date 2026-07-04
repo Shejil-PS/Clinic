@@ -20,15 +20,25 @@ export class ConsultationScreenComponent implements OnInit {
 
   // Treatments
   availableTreatments: any[] = [];
-  selectedTreatmentId: string = '';
+  treatmentSearch: string = '';
   treatmentNotes: string = '';
   addedTreatments: any[] = [];
 
   // Medicines
   availableMedicines: any[] = [];
-  selectedMedicineId: string = '';
+  medicineSearch: string = '';
   medicineInstructions: string = '';
   addedPrescriptions: any[] = [];
+
+  get filteredTreatments() {
+    const term = (this.treatmentSearch || '').toLowerCase();
+    return this.availableTreatments.filter(t => (t.treatmentName || '').toLowerCase().includes(term));
+  }
+
+  get filteredMedicines() {
+    const term = (this.medicineSearch || '').toLowerCase();
+    return this.availableMedicines.filter(m => (m.medicineName || '').toLowerCase().includes(term));
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -44,7 +54,34 @@ export class ConsultationScreenComponent implements OnInit {
     if (this.visitId) {
       this.loadVisit();
       this.loadMasters();
+      this.loadDraft();
     }
+  }
+
+  loadDraft() {
+    const draftStr = localStorage.getItem('draft_' + this.visitId);
+    if (draftStr) {
+      try {
+        const draft = JSON.parse(draftStr);
+        this.chiefComplaint = draft.chiefComplaint || '';
+        this.addedTreatments = draft.addedTreatments || [];
+        this.addedPrescriptions = draft.addedPrescriptions || [];
+        this.showSuccess('Draft loaded automatically');
+      } catch (e) {
+        console.error('Failed to parse draft', e);
+      }
+    }
+  }
+
+  saveDraft() {
+    const draft = {
+      chiefComplaint: this.chiefComplaint,
+      addedTreatments: this.addedTreatments,
+      addedPrescriptions: this.addedPrescriptions
+    };
+    localStorage.setItem('draft_' + this.visitId, JSON.stringify(draft));
+    this.showSuccess('Draft saved securely');
+    this.router.navigate(['/queue']);
   }
 
   loadVisit() {
@@ -66,51 +103,57 @@ export class ConsultationScreenComponent implements OnInit {
   }
 
   addTreatment() {
-    if (!this.selectedTreatmentId) return;
+    if (!this.treatmentSearch) return;
     
-    const treatmentReq = {
-      visitId: this.visitId,
-      patientId: this.visit.patientId,
-      treatmentMasterId: this.selectedTreatmentId,
+    const existing = this.availableTreatments.find(t => (t.treatmentName || '').toLowerCase() === this.treatmentSearch.toLowerCase());
+    
+    this.addedTreatments.push({
+      treatmentId: existing ? existing.id : 'CUSTOM',
+      treatmentName: existing ? existing.treatmentName : this.treatmentSearch,
+      status: 'COMPLETED',
+      cost: existing ? existing.cost : 0,
       notes: this.treatmentNotes
-    };
-
-    this.consultationService.addTreatment(treatmentReq).subscribe({
-      next: (res) => {
-        this.addedTreatments.push({ ...res, notes: this.treatmentNotes });
-        this.selectedTreatmentId = '';
-        this.treatmentNotes = '';
-        this.showSuccess('Treatment added');
-      },
-      error: () => this.showError('Failed to add treatment')
     });
+    
+    this.treatmentSearch = '';
+    this.treatmentNotes = '';
+    this.showSuccess('Treatment added locally');
   }
 
   addPrescription() {
-    if (!this.selectedMedicineId) return;
+    if (!this.medicineSearch) return;
 
-    const req = {
-      visitId: this.visitId,
-      patientId: this.visit.patientId,
-      medicineMasterId: this.selectedMedicineId,
-      instructions: this.medicineInstructions
-    };
+    const existing = this.availableMedicines.find(m => (m.medicineName || '').toLowerCase() === this.medicineSearch.toLowerCase());
 
-    this.consultationService.addPrescription(req).subscribe({
-      next: (res) => {
-        this.addedPrescriptions.push({ ...res, instructions: this.medicineInstructions });
-        this.selectedMedicineId = '';
-        this.medicineInstructions = '';
-        this.showSuccess('Prescription added');
-      },
-      error: () => this.showError('Failed to add prescription')
+    this.addedPrescriptions.push({
+      medicineId: existing ? existing.id : 'CUSTOM',
+      medicineName: existing ? existing.medicineName : this.medicineSearch,
+      dosage: '',
+      duration: '',
+      quantity: 1,
+      instruction: this.medicineInstructions
     });
+
+    this.medicineSearch = '';
+    this.medicineInstructions = '';
+    this.showSuccess('Medicine added locally');
   }
 
   finishConsultation() {
     this.isLoading = true;
-    this.consultationService.finishConsultation(this.visitId).subscribe({
+
+    const payload = {
+      diagnosis: '',
+      notes: this.chiefComplaint,
+      treatments: this.addedTreatments,
+      prescription: this.addedPrescriptions.length > 0 ? {
+        medicineList: this.addedPrescriptions
+      } : null
+    };
+
+    this.consultationService.finishConsultation(this.visitId, payload).subscribe({
       next: () => {
+        localStorage.removeItem('draft_' + this.visitId);
         this.showSuccess('Consultation finished successfully');
         this.router.navigate(['/queue']);
       },
