@@ -6,6 +6,7 @@ import { MedicineMasterComponent } from './components/medicine-master/medicine-m
 import { RegistrationComponent } from './components/registration/registration.component';
 import { ConsultationQueueComponent } from './components/consultation-queue/consultation-queue.component';
 import { ConsultationScreenComponent } from './components/consultation-screen/consultation-screen.component';
+import { ConsultedPatientsComponent } from './components/consulted-patients/consulted-patients.component';
 import { AuthGuard } from './core/auth/auth.guard';
 
 const routes: Routes = [
@@ -18,7 +19,8 @@ const routes: Routes = [
       { path: 'medicine-master', component: MedicineMasterComponent },
       { path: 'registration', component: RegistrationComponent },
       { path: 'queue', component: ConsultationQueueComponent },
-      { path: 'consultation/:visitId', component: ConsultationScreenComponent }
+      { path: 'consultation/:visitId', component: ConsultationScreenComponent },
+      { path: 'consulted', component: ConsultedPatientsComponent }
     ]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' }

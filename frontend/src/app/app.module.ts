@@ -15,6 +15,8 @@ import { MedicineDialogComponent } from './components/medicine-master/medicine-d
 import { RegistrationComponent } from './components/registration/registration.component';
 import { ConsultationQueueComponent } from './components/consultation-queue/consultation-queue.component';
 import { ConsultationScreenComponent } from './components/consultation-screen/consultation-screen.component';
+import { ConsultedPatientsComponent } from './components/consulted-patients/consulted-patients.component';
+import { BillingDialogComponent } from './components/consulted-patients/billing-dialog/billing-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +26,9 @@ import { ConsultationScreenComponent } from './components/consultation-screen/co
     MedicineDialogComponent,
     RegistrationComponent,
     ConsultationQueueComponent,
-    ConsultationScreenComponent
+    ConsultationScreenComponent,
+    ConsultedPatientsComponent,
+    BillingDialogComponent
   ],
   imports: [
     BrowserModule,
