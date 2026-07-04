@@ -13,6 +13,8 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { MedicineMasterComponent } from './components/medicine-master/medicine-master.component';
 import { MedicineDialogComponent } from './components/medicine-master/medicine-dialog/medicine-dialog.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ConsultationQueueComponent } from './components/consultation-queue/consultation-queue.component';
+import { ConsultationScreenComponent } from './components/consultation-screen/consultation-screen.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,9 @@ import { RegistrationComponent } from './components/registration/registration.co
     LayoutComponent,
     MedicineMasterComponent,
     MedicineDialogComponent,
-    RegistrationComponent
+    RegistrationComponent,
+    ConsultationQueueComponent,
+    ConsultationScreenComponent
   ],
   imports: [
     BrowserModule,

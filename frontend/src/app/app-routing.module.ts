@@ -4,6 +4,8 @@ import { LoginComponent } from './components/login/login.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { MedicineMasterComponent } from './components/medicine-master/medicine-master.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ConsultationQueueComponent } from './components/consultation-queue/consultation-queue.component';
+import { ConsultationScreenComponent } from './components/consultation-screen/consultation-screen.component';
 import { AuthGuard } from './core/auth/auth.guard';
 
 const routes: Routes = [
@@ -14,7 +16,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'medicine-master', component: MedicineMasterComponent },
-      { path: 'registration', component: RegistrationComponent }
+      { path: 'registration', component: RegistrationComponent },
+      { path: 'queue', component: ConsultationQueueComponent },
+      { path: 'consultation/:visitId', component: ConsultationScreenComponent }
     ]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' }

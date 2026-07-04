@@ -15,3 +15,11 @@ export interface Visit {
   visitDate?: string;
   status?: string;
 }
+
+export interface VisitDTO {
+  visitId: string;
+  patientId: string;
+  patientName: string;
+  visitDate: string;
+  status: string;
+}

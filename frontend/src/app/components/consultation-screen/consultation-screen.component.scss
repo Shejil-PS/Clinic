@@ -1,0 +1,78 @@
+.page-container {
+  padding: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+
+  .page-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+    color: #2c3e50;
+    flex-grow: 1;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  > * {
+    min-height: 200px;
+  }
+}
+
+.glass-card {
+  padding: 24px;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #34495e;
+    font-size: 20px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.add-section {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  
+  mat-form-field {
+    flex: 1;
+  }
+  
+  button {
+    height: 56px;
+    margin-bottom: 22px;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  &.waiting {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  &.consulted {
+    background-color: #d4edda;
+    color: #155724;
+  }
+}

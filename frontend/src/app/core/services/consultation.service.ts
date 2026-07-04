@@ -23,4 +23,25 @@ export class ConsultationService {
   registerVisit(patientId: string): Observable<Visit> {
     return this.http.post<Visit>(this.visitUrl, { patientId });
   }
+
+  getVisitsByDate(dateStr: string): Observable<any[]> {
+    let params = new HttpParams().set('date', dateStr);
+    return this.http.get<any[]>(`${this.visitUrl}/date`, { params });
+  }
+
+  getVisitById(visitId: string): Observable<Visit> {
+    return this.http.get<Visit>(`${this.visitUrl}/${visitId}`);
+  }
+
+  finishConsultation(visitId: string): Observable<any> {
+    return this.http.post(`${this.visitUrl}/${visitId}/finish`, {});
+  }
+
+  addPrescription(prescription: any): Observable<any> {
+    return this.http.post('http://localhost:8080/api/v1/prescriptions', prescription);
+  }
+
+  addTreatment(treatment: any): Observable<any> {
+    return this.http.post('http://localhost:8080/api/v1/treatments', treatment);
+  }
 }

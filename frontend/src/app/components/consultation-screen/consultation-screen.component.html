@@ -1,0 +1,84 @@
+<div class="page-container" *ngIf="visit">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/queue"><mat-icon>arrow_back</mat-icon></button>
+    <h1 class="page-title">Consultation</h1>
+    
+    <button mat-raised-button color="accent" (click)="finishConsultation()" [disabled]="isLoading || visit.status === 'CONSULTED'">
+      <mat-icon>done_all</mat-icon> Finish Consultation
+    </button>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Patient Info -->
+    <mat-card class="glass-card info-card">
+      <h2>Patient Information</h2>
+      <p><strong>ID:</strong> {{visit.patientId}}</p>
+      <!-- We would ideally fetch full patient details here. For now just ID. -->
+      <p><strong>Visit Status:</strong> <span class="status-badge" [ngClass]="visit.status?.toLowerCase()">{{visit.status}}</span></p>
+      <p><strong>Date:</strong> {{visit.visitDate}}</p>
+    </mat-card>
+
+    <!-- Medical Notes (Vitals/Chief Complaint) -->
+    <mat-card class="glass-card">
+      <h2>Medical Notes</h2>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Chief Complaint / Symptoms</mat-label>
+        <textarea matInput [(ngModel)]="chiefComplaint" rows="4"></textarea>
+      </mat-form-field>
+    </mat-card>
+
+    <!-- Treatments Section -->
+    <mat-card class="glass-card">
+      <h2>Dental Treatments</h2>
+      <div class="add-section">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Treatment</mat-label>
+          <mat-select [(ngModel)]="selectedTreatmentId">
+            <mat-option *ngFor="let t of availableTreatments" [value]="t.id">{{t.treatmentName}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Notes</mat-label>
+          <input matInput [(ngModel)]="treatmentNotes">
+        </mat-form-field>
+        <button mat-stroked-button color="primary" (click)="addTreatment()" [disabled]="!selectedTreatmentId">Add Treatment</button>
+      </div>
+
+      <!-- Ideally table of added treatments here -->
+      <mat-list>
+        <mat-list-item *ngFor="let t of addedTreatments">
+          <mat-icon matListItemIcon>medical_services</mat-icon>
+          <div matListItemTitle>Treatment Added</div>
+          <div matListItemLine>{{t.notes}}</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+
+    <!-- Medicines Section -->
+    <mat-card class="glass-card">
+      <h2>Prescriptions</h2>
+      <div class="add-section">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Medicine</mat-label>
+          <mat-select [(ngModel)]="selectedMedicineId">
+            <mat-option *ngFor="let m of availableMedicines" [value]="m.id">{{m.medicineName}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Instructions</mat-label>
+          <input matInput [(ngModel)]="medicineInstructions">
+        </mat-form-field>
+        <button mat-stroked-button color="primary" (click)="addPrescription()" [disabled]="!selectedMedicineId">Add Medicine</button>
+      </div>
+
+      <mat-list>
+        <mat-list-item *ngFor="let p of addedPrescriptions">
+          <mat-icon matListItemIcon>medication</mat-icon>
+          <div matListItemTitle>Medicine Prescribed</div>
+          <div matListItemLine>{{p.instructions}}</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+
+  </div>
+</div>
