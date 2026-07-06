@@ -17,6 +17,7 @@ import { ConsultationQueueComponent } from './components/consultation-queue/cons
 import { ConsultationScreenComponent } from './components/consultation-screen/consultation-screen.component';
 import { ConsultedPatientsComponent } from './components/consulted-patients/consulted-patients.component';
 import { BillingDialogComponent } from './components/consulted-patients/billing-dialog/billing-dialog.component';
+import { HistoryDialogComponent } from './components/consultation-queue/history-dialog/history-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,7 +29,8 @@ import { BillingDialogComponent } from './components/consulted-patients/billing-
     ConsultationQueueComponent,
     ConsultationScreenComponent,
     ConsultedPatientsComponent,
-    BillingDialogComponent
+    BillingDialogComponent,
+    HistoryDialogComponent
   ],
   imports: [
     BrowserModule,

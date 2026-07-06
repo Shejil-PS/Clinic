@@ -43,7 +43,7 @@
         <div class="detail-item"><strong>Age/Gender:</strong> {{ existingPatient.age }} / {{ existingPatient.gender }}</div>
       </div>
 
-      <button mat-raised-button color="primary" class="action-btn" (click)="registerVisit(existingPatient.id!)" [disabled]="isLoading">
+      <button mat-raised-button color="primary" class="action-btn" (click)="registerVisit(existingPatient.patientId!)" [disabled]="isLoading">
         <span *ngIf="!isLoading">Register Today's Visit</span>
         <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
       </button>

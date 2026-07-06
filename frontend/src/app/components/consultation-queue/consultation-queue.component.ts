@@ -2,10 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ConsultationService } from '../../core/services/consultation.service';
 import { DateFilterService } from '../../core/services/date-filter.service';
 import { VisitDTO } from '../../core/models/patient.model';
+import { HistoryDialogComponent } from './history-dialog/history-dialog.component';
 
 @Component({
   selector: 'app-consultation-queue',
@@ -24,7 +26,8 @@ export class ConsultationQueueComponent implements OnInit, OnDestroy {
     private consultationService: ConsultationService,
     private dateFilterService: DateFilterService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
   }
 
@@ -59,5 +62,12 @@ export class ConsultationQueueComponent implements OnInit, OnDestroy {
 
   startConsultation(visitId: string) {
     this.router.navigate(['/consultation', visitId]);
+  }
+
+  viewHistory(visit: VisitDTO) {
+    this.dialog.open(HistoryDialogComponent, {
+      width: '700px',
+      data: visit
+    });
   }
 }

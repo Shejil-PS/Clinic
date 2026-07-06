@@ -21,6 +21,10 @@ export class ConsultationService {
     return this.http.post<Patient>(this.patientUrl, patient);
   }
 
+  getPatientProfile(patientId: string): Observable<any> {
+    return this.http.get<any>(`${this.patientUrl}/profile/${patientId}`);
+  }
+
   getAllPatients(): Observable<Patient[]> {
     let params = new HttpParams().set('size', '100000');
     return this.http.get<any>(this.patientUrl, { params }).pipe(

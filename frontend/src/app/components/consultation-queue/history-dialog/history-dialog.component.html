@@ -1,0 +1,82 @@
+<h2 mat-dialog-title>Patient History: {{ data.patientName }} ({{ data.patientId }})</h2>
+<mat-dialog-content>
+  <div class="loading-shade" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="history-container" *ngIf="!isLoading && profileData">
+    
+    <!-- Past Visits -->
+    <div class="history-section" *ngIf="profileData.previousVisits?.length > 0">
+      <h3>Past Visits</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Visit ID</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visit of profileData.previousVisits">
+            <td>{{ visit.visitId }}</td>
+            <td>{{ visit.visitDate | date:'shortDate' }}</td>
+            <td>{{ visit.visitStatus || visit.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Treatment History -->
+    <div class="history-section" *ngIf="profileData.treatmentHistory?.length > 0">
+      <h3>Treatment History</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Treatment</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of profileData.treatmentHistory">
+            <td>{{ t.createdAt | date:'shortDate' }}</td>
+            <td>{{ t.treatmentName }}</td>
+            <td>{{ t.notes || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Prescription History -->
+    <div class="history-section" *ngIf="flattenedMedicines && flattenedMedicines.length > 0">
+      <h3>Prescription History</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Medicine</th>
+            <th>Instructions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of flattenedMedicines">
+            <td>{{ m.date | date:'shortDate' }}</td>
+            <td>{{ m.medicineName }}</td>
+            <td>{{ m.instruction || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="(!profileData.previousVisits || profileData.previousVisits.length === 0) && 
+                (!profileData.treatmentHistory || profileData.treatmentHistory.length === 0) && 
+                (!flattenedMedicines || flattenedMedicines.length === 0)">
+      <p>No history found for this patient.</p>
+    </div>
+
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

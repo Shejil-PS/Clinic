@@ -36,11 +36,14 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let visit">
-          <button mat-raised-button color="primary" *ngIf="visit.visitStatus === 'WAITING'" (click)="startConsultation(visit.visitId)">
+          <button mat-raised-button color="primary" *ngIf="visit.visitStatus === 'WAITING'" (click)="startConsultation(visit.visitId)" style="margin-right: 8px;">
             Start Consultation
           </button>
-          <button mat-stroked-button color="primary" *ngIf="visit.visitStatus === 'CONSULTED'" (click)="startConsultation(visit.visitId)">
+          <button mat-stroked-button color="primary" *ngIf="visit.visitStatus === 'CONSULTED'" (click)="startConsultation(visit.visitId)" style="margin-right: 8px;">
             View Details
+          </button>
+          <button mat-stroked-button color="accent" (click)="viewHistory(visit)">
+            <mat-icon>history</mat-icon> View History
           </button>
         </td>
       </ng-container>
