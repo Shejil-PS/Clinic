@@ -14,8 +14,16 @@
           <input matInput type="number" formControlName="consultationFee" (input)="calculateTotal()">
         </mat-form-field>
         
-        <div class="calculated-info" *ngIf="treatmentDetails.length > 0" style="margin-bottom: 15px;">
-          <p style="margin: 0; color: #2c3e50;"><strong>Auto-calculated Treatment Charges:</strong> Rs. {{totalTreatmentCost}}</p>
+        <div class="calculated-info" *ngIf="treatmentDetails.length > 0" style="margin-bottom: 15px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px; background-color: #f9f9f9;">
+          <h4 style="margin-top: 0; margin-bottom: 8px; color: #153c61; font-size: 14px;">Treatment Charges</h4>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 14px;" *ngFor="let t of treatmentDetails">
+            <span>{{t.treatmentName}}</span>
+            <span>Rs. {{t.cost}}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; font-weight: bold; color: #2c3e50; font-size: 14px;">
+            <span>Total Treatment Charges</span>
+            <span>Rs. {{totalTreatmentCost}}</span>
+          </div>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">

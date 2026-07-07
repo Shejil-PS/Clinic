@@ -43,6 +43,8 @@ public class Treatment {
     private Double cost;
     
     private String notes;
+    
+    private String fileUrl;
 
     @CreatedDate
     private LocalDateTime createdAt;

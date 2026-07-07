@@ -1,5 +1,5 @@
 <mat-sidenav-container class="app-container">
-  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+  <mat-sidenav #sidenav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" class="sidenav">
     <div class="sidebar-header">
       <mat-icon class="logo-icon">local_hospital</mat-icon>
       <h2>Asha's Dental</h2>
@@ -36,7 +36,7 @@
       <span class="spacer"></span>
       
       <!-- Global Date Filter -->
-      <mat-form-field appearance="outline" class="global-date-filter no-print" style="margin-right: 16px; width: 200px; margin-top: 15px;">
+      <mat-form-field appearance="outline" class="global-date-filter no-print">
         <mat-label>Global Date</mat-label>
         <input matInput type="date" [value]="selectedDate" (change)="onDateChange($event)">
       </mat-form-field>

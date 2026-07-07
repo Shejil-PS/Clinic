@@ -8,8 +8,8 @@ import { Patient, Visit } from '../models/patient.model';
   providedIn: 'root'
 })
 export class ConsultationService {
-  private patientUrl = 'http://localhost:8080/api/v1/patients';
-  private visitUrl = 'http://localhost:8080/api/v1/visits';
+  private patientUrl = 'http://10.88.155.227:8080/api/v1/patients';
+  private visitUrl = 'http://10.88.155.227:8080/api/v1/visits';
 
   constructor(private http: HttpClient) { }
 
@@ -47,23 +47,29 @@ export class ConsultationService {
     return this.http.get<Visit>(`${this.visitUrl}/${visitId}`);
   }
 
-  finishConsultation(visitId: string, payload: any): Observable<any> {
-    return this.http.post(`${this.visitUrl}/${visitId}/finish`, payload);
+  finishConsultation(visitId: string, payload: any): Observable<Visit> {
+    return this.http.post<Visit>(`http://10.88.155.227:8080/api/v1/visits/${visitId}/finish`, payload);
+  }
+
+  uploadFile(file: File): Observable<{fileUrl: string}> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{fileUrl: string}>('http://10.88.155.227:8080/api/v1/files/upload', formData);
   }
 
   getBillByVisitId(visitId: string): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/v1/bills/visit/${visitId}`);
+    return this.http.get(`http://10.88.155.227:8080/api/v1/bills/visit/${visitId}`);
   }
 
   getPrescriptionByVisitId(visitId: string): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/v1/prescriptions/visit/${visitId}`);
+    return this.http.get(`http://10.88.155.227:8080/api/v1/prescriptions/visit/${visitId}`);
   }
 
   addPrescription(prescription: any): Observable<any> {
-    return this.http.post('http://localhost:8080/api/v1/prescriptions', prescription);
+    return this.http.post('http://10.88.155.227:8080/api/v1/prescriptions', prescription);
   }
 
   addTreatment(treatment: any): Observable<any> {
-    return this.http.post('http://localhost:8080/api/v1/treatments', treatment);
+    return this.http.post('http://10.88.155.227:8080/api/v1/treatments', treatment);
   }
 }

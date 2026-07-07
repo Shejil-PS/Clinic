@@ -43,11 +43,21 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Notes</mat-label>
-          <input matInput [(ngModel)]="treatmentNotes">
+
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Treatment Notes (Optional)</mat-label>
+          <textarea matInput [(ngModel)]="treatmentNotes" rows="2"></textarea>
         </mat-form-field>
-        <button mat-stroked-button color="primary" (click)="addTreatment()" [disabled]="!treatmentSearch">Add Treatment</button>
+        
+        <button mat-raised-button color="accent" (click)="addTreatment()" [disabled]="!treatmentSearch || isUploading">
+          <span *ngIf="!isUploading">Add Treatment</span>
+          <mat-spinner diameter="20" *ngIf="isUploading"></mat-spinner>
+        </button>
+      </div>
+
+      <div class="file-upload-section" *ngIf="isXraySelected()">
+        <label class="upload-label">Upload X-Ray Image:</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf" class="file-input">
       </div>
 
       <mat-list>

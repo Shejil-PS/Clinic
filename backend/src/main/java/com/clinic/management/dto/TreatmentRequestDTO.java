@@ -26,4 +26,6 @@ public class TreatmentRequestDTO {
     private Double cost;
     
     private String notes;
+    
+    private String fileUrl;
 }

@@ -23,6 +23,7 @@ public class TreatmentResponseDTO {
     private String status;
     private Double cost;
     private String notes;
+    private String fileUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

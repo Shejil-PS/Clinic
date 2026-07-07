@@ -102,22 +102,59 @@ export class ConsultationScreenComponent implements OnInit {
     });
   }
 
+  selectedFile: File | null = null;
+  isUploading = false;
+
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+    }
+  }
+
+  isXraySelected(): boolean {
+    return this.treatmentSearch.toLowerCase().includes('x-ray') || this.treatmentSearch.toLowerCase().includes('xray');
+  }
+
   addTreatment() {
     if (!this.treatmentSearch) return;
     
     const existing = this.availableTreatments.find(t => (t.treatmentName || '').toLowerCase() === this.treatmentSearch.toLowerCase());
     
-    this.addedTreatments.push({
+    const treatmentData = {
       treatmentId: existing ? existing.id : 'CUSTOM',
       treatmentName: existing ? existing.treatmentName : this.treatmentSearch,
       status: 'COMPLETED',
       cost: existing ? existing.cost : 0,
-      notes: this.treatmentNotes
-    });
-    
+      notes: this.treatmentNotes,
+      fileUrl: ''
+    };
+
+    if (this.isXraySelected() && this.selectedFile) {
+      this.isUploading = true;
+      this.consultationService.uploadFile(this.selectedFile).subscribe({
+        next: (res) => {
+          treatmentData.fileUrl = res.fileUrl;
+          this.addedTreatments.push(treatmentData);
+          this.resetTreatmentForm();
+          this.isUploading = false;
+          this.showSuccess('Treatment and file added locally');
+        },
+        error: () => {
+          this.showError('Failed to upload file');
+          this.isUploading = false;
+        }
+      });
+    } else {
+      this.addedTreatments.push(treatmentData);
+      this.resetTreatmentForm();
+      this.showSuccess('Treatment added locally');
+    }
+  }
+
+  private resetTreatmentForm() {
     this.treatmentSearch = '';
     this.treatmentNotes = '';
-    this.showSuccess('Treatment added locally');
+    this.selectedFile = null;
   }
 
   addPrescription() {

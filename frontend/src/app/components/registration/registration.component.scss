@@ -14,6 +14,9 @@
 
 .registration-card {
   padding: 40px;
+  @media (max-width: 600px) {
+    padding: 20px;
+  }
 }
 
 .search-section {
@@ -37,6 +40,13 @@
   gap: 16px;
   align-items: flex-start;
   margin-bottom: 20px;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    .search-btn {
+      width: 100%;
+    }
+  }
 }
 
 .search-btn {
@@ -87,6 +97,9 @@
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     margin-bottom: 30px;
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
     
     .detail-item {
       font-size: 16px;
@@ -109,6 +122,16 @@
     border-radius: 8px;
     margin-right: 16px;
     min-width: 200px;
+    @media (max-width: 600px) {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 16px;
+    }
+  }
+  .cancel-btn {
+    @media (max-width: 600px) {
+      width: 100%;
+    }
   }
 }
 
@@ -123,6 +146,10 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
   }
   
   .form-actions {
@@ -130,6 +157,12 @@
     justify-content: flex-end;
     gap: 16px;
     margin-top: 20px;
+    @media (max-width: 600px) {
+      flex-direction: column-reverse;
+      button {
+        width: 100%;
+      }
+    }
     
     button {
       height: 48px;

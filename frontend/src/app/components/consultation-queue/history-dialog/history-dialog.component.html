@@ -41,7 +41,10 @@
         <tbody>
           <tr *ngFor="let t of profileData.treatmentHistory">
             <td>{{ t.createdAt | date:'shortDate' }}</td>
-            <td>{{ t.treatmentName }}</td>
+            <td>
+              {{ t.treatmentName }}
+              <a *ngIf="t.fileUrl" [href]="t.fileUrl" target="_blank" style="margin-left: 8px; color: #3498db; text-decoration: underline; font-size: 12px;">(View X-ray)</a>
+            </td>
             <td>{{ t.notes || '-' }}</td>
           </tr>
         </tbody>
