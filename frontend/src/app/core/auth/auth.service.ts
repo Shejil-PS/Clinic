@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://10.88.155.227:8080/api/v1/auth';
+  private apiUrl = `http://${window.location.hostname}:8080/api/v1/auth`;
   private currentTokenSubject: BehaviorSubject<string | null>;
 
   constructor(private http: HttpClient, private router: Router) {
@@ -21,9 +21,11 @@ export class AuthService {
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials)
       .pipe(tap(response => {
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
-          this.currentTokenSubject.next(response.token);
+        // Handle ApiResponse wrapper if present
+        const token = response.data ? response.data.token : response.token;
+        if (token) {
+          localStorage.setItem('token', token);
+          this.currentTokenSubject.next(token);
         }
       }));
   }

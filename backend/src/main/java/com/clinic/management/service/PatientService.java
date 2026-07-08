@@ -22,10 +22,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class PatientService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
 
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
@@ -44,6 +48,7 @@ public class PatientService {
         patient.setUpdatedAt(LocalDateTime.now());
         
         Patient savedPatient = patientRepository.save(patient);
+        logger.info("AUDIT LOG: Patient registered successfully. PatientID: {}", savedPatient.getPatientId());
         return patientMapper.toDto(savedPatient);
     }
 
