@@ -66,25 +66,25 @@ Running the application as a Windows Service ensures it starts automatically whe
    - Ensure it is in the exact same folder as `clinic-service.exe`.
 
 4. **Install the Service:**
-   - Open Command Prompt **as Administrator**.
+   - Open **PowerShell as Administrator** (Right-click -> Run as Administrator).
    - Navigate to the `ClinicServer` folder:
-     ```cmd
+     ```powershell
      cd C:\path\to\ClinicServer
      ```
    - Run the install command:
-     ```cmd
-     clinic-service.exe install
+     ```powershell
+     .\clinic-service.exe install
      ```
 
 5. **Start the Service:**
    - Run:
-     ```cmd
-     clinic-service.exe start
+     ```powershell
+     .\clinic-service.exe start
      ```
    - The application is now running as a background service!
 
-### Service Management Commands (Run as Administrator):
-- **Stop Service:** `clinic-service.exe stop`
-- **Restart Service:** `clinic-service.exe restart`
-- **Uninstall Service:** `clinic-service.exe uninstall` (Make sure to stop it first)
-- **Check Status:** `clinic-service.exe status`
+### Service Management Commands (Run in PowerShell as Administrator):
+- **Stop Service:** `.\clinic-service.exe stop`
+- **Restart Service:** `.\clinic-service.exe restart`
+- **Uninstall Service:** `.\clinic-service.exe uninstall` (Make sure to stop it first)
+- **Check Status:** `.\clinic-service.exe status`
