@@ -1,0 +1,6 @@
+@echo off
+echo Restarting Dental Clinic Management System...
+call stop.bat
+echo Waiting for 3 seconds before starting...
+timeout /t 3 /nobreak > nul
+call start.bat

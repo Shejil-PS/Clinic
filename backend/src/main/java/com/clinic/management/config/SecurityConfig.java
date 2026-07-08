@@ -53,7 +53,14 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/api/v1/files/**",
                                 "/uploads/**",
-                                "/error")
+                                "/error",
+                                "/",
+                                "/index.html",
+                                "/*.js",
+                                "/*.css",
+                                "/*.ico",
+                                "/assets/**",
+                                "/**/{path:[^\\.]*}") // Allow angular routing
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

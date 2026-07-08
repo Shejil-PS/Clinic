@@ -1,0 +1,14 @@
+<service>
+  <id>ClinicManagementSystem</id>
+  <name>Clinic Management System</name>
+  <description>Dental Clinic Management System - Spring Boot Backend with Angular Frontend.</description>
+  
+  <executable>java</executable>
+  <arguments>-jar "%BASE%\clinic-management.jar" --spring.config.location="file:%BASE%\config\application-prod.properties"</arguments>
+  
+  <logmode>rotate</logmode>
+  <logpath>%BASE%\logs</logpath>
+  
+  <!-- Ensures the service restarts on failure -->
+  <onfailure action="restart" delay="10 sec"/>
+</service>
