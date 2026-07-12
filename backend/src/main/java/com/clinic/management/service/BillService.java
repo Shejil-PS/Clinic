@@ -53,6 +53,23 @@ public class BillService {
         bill.setPaymentStatus(status);
         return billMapper.toDto(billRepository.save(bill));
     }
+    
+    public BillDTO updateBill(String id, BillDTO dto) {
+        Bill bill = billRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Bill not found with id: " + id));
+        
+        bill.setSubtotal(dto.getSubtotal());
+        bill.setDiscount(dto.getDiscount());
+        bill.setGrandTotal(dto.getGrandTotal());
+        
+        if (dto.getTreatmentDetails() != null) {
+            bill.setTreatmentDetails(dto.getTreatmentDetails().stream()
+                    .map(t -> new Bill.TreatmentDetail(t.getTreatmentName(), t.getCost()))
+                    .toList());
+        }
+        
+        return billMapper.toDto(billRepository.save(bill));
+    }
 
     private String generateBillNumber() {
         return billRepository.findTopByOrderByBillNumberDesc()

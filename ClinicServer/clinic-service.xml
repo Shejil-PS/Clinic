@@ -6,9 +6,14 @@
   <executable>java</executable>
   <arguments>-jar "%BASE%\clinic-management.jar" --spring.config.location="file:%BASE%\config\application-prod.properties"</arguments>
   
+  <startmode>Automatic</startmode>
+  <!-- Ensures the service waits for MongoDB to start -->
+  <depend>MongoDB</depend>
+  
   <logmode>rotate</logmode>
   <logpath>%BASE%\logs</logpath>
   
   <!-- Ensures the service restarts on failure -->
   <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="20 sec"/>
 </service>

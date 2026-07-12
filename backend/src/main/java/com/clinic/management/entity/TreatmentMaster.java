@@ -29,8 +29,6 @@ public class TreatmentMaster {
     private String treatmentName;
     
     private String description;
-    
-    private Double cost;
 
     @Builder.Default
     private Boolean active = true;

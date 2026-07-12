@@ -8,13 +8,14 @@ import { Patient, Visit } from '../models/patient.model';
   providedIn: 'root'
 })
 export class ConsultationService {
-  private patientUrl = 'http://10.88.155.227:8080/api/v1/patients';
-  private visitUrl = 'http://10.88.155.227:8080/api/v1/visits';
+  private baseUrl = `http://${window.location.hostname}:8080/api/v1`;
+  private patientUrl = `${this.baseUrl}/patients`;
+  private visitUrl = `${this.baseUrl}/visits`;
 
   constructor(private http: HttpClient) { }
 
-  searchPatientByPhone(phone: string): Observable<Patient> {
-    return this.http.get<Patient>(`${this.patientUrl}/phone/${phone}`);
+  searchPatientByPhone(phone: string): Observable<Patient[]> {
+    return this.http.get<Patient[]>(`${this.patientUrl}/phone/${phone}`);
   }
 
   registerPatient(patient: Patient): Observable<Patient> {
@@ -48,28 +49,32 @@ export class ConsultationService {
   }
 
   finishConsultation(visitId: string, payload: any): Observable<Visit> {
-    return this.http.post<Visit>(`http://10.88.155.227:8080/api/v1/visits/${visitId}/finish`, payload);
+    return this.http.post<Visit>(`${this.baseUrl}/visits/${visitId}/finish`, payload);
   }
 
   uploadFile(file: File): Observable<{fileUrl: string}> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<{fileUrl: string}>('http://10.88.155.227:8080/api/v1/files/upload', formData);
+    return this.http.post<{fileUrl: string}>(`${this.baseUrl}/files/upload`, formData);
   }
 
   getBillByVisitId(visitId: string): Observable<any> {
-    return this.http.get(`http://10.88.155.227:8080/api/v1/bills/visit/${visitId}`);
+    return this.http.get(`${this.baseUrl}/bills/visit/${visitId}`);
+  }
+
+  updateBill(billId: string, payload: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/bills/${billId}`, payload);
   }
 
   getPrescriptionByVisitId(visitId: string): Observable<any> {
-    return this.http.get(`http://10.88.155.227:8080/api/v1/prescriptions/visit/${visitId}`);
+    return this.http.get(`${this.baseUrl}/prescriptions/visit/${visitId}`);
   }
 
   addPrescription(prescription: any): Observable<any> {
-    return this.http.post('http://10.88.155.227:8080/api/v1/prescriptions', prescription);
+    return this.http.post(`${this.baseUrl}/prescriptions`, prescription);
   }
 
   addTreatment(treatment: any): Observable<any> {
-    return this.http.post('http://10.88.155.227:8080/api/v1/treatments', treatment);
+    return this.http.post(`${this.baseUrl}/treatments`, treatment);
   }
 }

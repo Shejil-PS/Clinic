@@ -30,24 +30,33 @@
       </div>
     </div>
 
-    <!-- Step 2A: Patient Found - Register Visit -->
-    <div class="patient-details-section" *ngIf="patientFound && existingPatient">
+    <!-- Step 2A: Patients Found - Register Visit -->
+    <div class="patient-details-section" *ngIf="patientFound && existingPatients.length > 0">
       <div class="success-banner">
-        <mat-icon>check_circle</mat-icon> Patient Found!
+        <mat-icon>check_circle</mat-icon> {{ existingPatients.length }} Patient(s) Found with this number!
       </div>
       
-      <div class="details-grid">
-        <div class="detail-item"><strong>Patient ID:</strong> {{ existingPatient.patientId }}</div>
-        <div class="detail-item"><strong>Name:</strong> {{ existingPatient.fullName }}</div>
-        <div class="detail-item"><strong>Phone:</strong> {{ existingPatient.phone }}</div>
-        <div class="detail-item"><strong>Age/Gender:</strong> {{ existingPatient.age }} / {{ existingPatient.gender }}</div>
+      <div *ngFor="let patient of existingPatients" class="patient-card" style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fafafa;">
+        <div class="details-grid">
+          <div class="detail-item"><strong>Patient ID:</strong> {{ patient.patientId }}</div>
+          <div class="detail-item"><strong>Name:</strong> {{ patient.fullName }}</div>
+          <div class="detail-item"><strong>Phone:</strong> {{ patient.phone }}</div>
+          <div class="detail-item"><strong>Age/Gender:</strong> {{ patient.age }} / {{ patient.gender }}</div>
+        </div>
+        <div style="margin-top: 10px;">
+          <button mat-raised-button color="primary" class="action-btn" (click)="registerVisit(patient.patientId!)" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Register Visit for {{ patient.fullName }}</span>
+            <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
+          </button>
+        </div>
       </div>
 
-      <button mat-raised-button color="primary" class="action-btn" (click)="registerVisit(existingPatient.patientId!)" [disabled]="isLoading">
-        <span *ngIf="!isLoading">Register Today's Visit</span>
-        <mat-spinner diameter="24" *ngIf="isLoading"></mat-spinner>
-      </button>
-      <button mat-button class="cancel-btn" (click)="resetSearch()">Cancel</button>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button mat-stroked-button color="primary" (click)="startNewRegistration()">
+          <mat-icon>person_add</mat-icon> Add Another Patient to this Number
+        </button>
+        <button mat-button class="cancel-btn" (click)="resetSearch()">Cancel</button>
+      </div>
     </div>
 
     <!-- Step 2B: New Patient Registration -->

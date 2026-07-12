@@ -44,6 +44,7 @@ export class BillingDialogComponent implements OnInit {
     private consultationService: ConsultationService
   ) {
     this.billForm = this.fb.group({
+      printType: ['both'],
       consultationFee: [250, [Validators.required, Validators.min(0)]],
       medicineCharges: [0, [Validators.required, Validators.min(0)]]
     });
@@ -59,12 +60,17 @@ export class BillingDialogComponent implements OnInit {
     });
   }
 
+  billId: string = '';
+
   fetchBillDetails() {
     this.consultationService.getBillByVisitId(this.data.visitId).subscribe({
       next: (bill) => {
-        if (bill && bill.treatmentDetails) {
-          this.treatmentDetails = bill.treatmentDetails;
-          this.totalTreatmentCost = bill.treatmentDetails.reduce((sum: number, t: any) => sum + (t.cost || 0), 0);
+        if (bill) {
+          this.billId = bill.id;
+          if (bill.treatmentDetails) {
+            this.treatmentDetails = bill.treatmentDetails;
+            this.totalTreatmentCost = bill.treatmentDetails.reduce((sum: number, t: any) => sum + (t.cost || 0), 0);
+          }
           this.calculateTotal();
         }
       },
@@ -86,40 +92,64 @@ export class BillingDialogComponent implements OnInit {
     const cons = vals.consultationFee || 0;
     const med = vals.medicineCharges || 0;
     
+    this.totalTreatmentCost = this.treatmentDetails.reduce((sum: number, t: any) => sum + (t.cost || 0), 0);
+    
     this.totalAmount = cons + this.totalTreatmentCost + med;
     if (this.totalAmount < 0) this.totalAmount = 0;
   }
 
   saveBill() {
-    if (this.billForm.valid) {
-      const printContents = document.getElementById('print-section')?.innerHTML;
-      if (printContents) {
-        const popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
-        if (popupWin) {
-          popupWin.document.open();
-          popupWin.document.write(`
-            <html>
-              <head>
-                <title>Print Bill - ${this.data.patientName}</title>
-                <style>
-                  body { font-family: sans-serif; padding: 20px; }
-                  table { width: 100%; border-collapse: collapse; }
-                  th, td { padding: 8px; border-bottom: 1px solid #ddd; }
-                  @media print {
-                    @page { margin: 15mm; }
-                    body { -webkit-print-color-adjust: exact; }
-                  }
-                </style>
-              </head>
-              <body onload="window.print(); setTimeout(() => window.close(), 500);">
-                ${printContents}
-              </body>
-            </html>
-          `);
-          popupWin.document.close();
-        }
+    if (this.billForm.get('printType')?.value === 'medicinesOnly') {
+      this.printBill();
+      this.dialogRef.close();
+      return;
+    }
+
+    if (this.billForm.valid && this.billId) {
+      const payload = {
+        subtotal: this.totalAmount, // Assuming subtotal includes consultation + treatment + medicine for now
+        discount: 0,
+        grandTotal: this.totalAmount,
+        treatmentDetails: this.treatmentDetails
+      };
+      
+      this.consultationService.updateBill(this.billId, payload).subscribe({
+        next: () => {
+          this.printBill();
+          this.dialogRef.close(this.billForm.value);
+        },
+        error: (err) => console.error('Failed to update bill', err)
+      });
+    }
+  }
+
+  printBill() {
+    const printContents = document.getElementById('print-section')?.innerHTML;
+    if (printContents) {
+      const popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+      if (popupWin) {
+        popupWin.document.open();
+        popupWin.document.write(`
+          <html>
+            <head>
+              <title>Print Bill - ${this.data.patientName}</title>
+              <style>
+                body { font-family: sans-serif; padding: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border-bottom: 1px solid #ddd; }
+                @media print {
+                  @page { margin: 15mm; }
+                  body { -webkit-print-color-adjust: exact; }
+                }
+              </style>
+            </head>
+            <body onload="window.print(); setTimeout(() => window.close(), 500);">
+              ${printContents}
+            </body>
+          </html>
+        `);
+        popupWin.document.close();
       }
-      this.dialogRef.close(this.billForm.value);
     }
   }
 }

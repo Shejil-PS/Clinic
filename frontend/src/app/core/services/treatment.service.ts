@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TreatmentService {
-  private apiUrl = 'http://10.88.155.227:8080/api/v1/treatments/master';
+  private apiUrl = `http://${window.location.hostname}:8080/api/v1/treatments/master`;
 
   constructor(private http: HttpClient) { }
 

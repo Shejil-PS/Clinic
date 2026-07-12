@@ -41,10 +41,9 @@ public class TreatmentService {
         treatment.setVisitId(visitId);
         treatment.setPatientId(patientId);
         
-        // Fetch cost from master if not provided or to ensure accuracy
-        treatmentMasterRepository.findByTreatmentId(requestDTO.getTreatmentId())
-                .ifPresent(master -> treatment.setCost(master.getCost()));
-                
+        if (treatment.getCost() == null) {
+            treatment.setCost(0.0);
+        }
         treatment.setCreatedAt(LocalDateTime.now());
         treatment.setUpdatedAt(LocalDateTime.now());
         

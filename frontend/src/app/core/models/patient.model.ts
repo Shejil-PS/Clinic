@@ -24,4 +24,6 @@ export interface VisitDTO {
   status: string;
   visitStatus?: string;
   doctorName?: string;
+  notes?: string;
+  chiefComplaint?: string;
 }

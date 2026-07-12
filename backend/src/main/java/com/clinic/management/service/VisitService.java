@@ -128,11 +128,11 @@ public class VisitService {
 
     @Transactional
     public VisitDTO registerConsultation(PatientRegistrationDTO registrationDTO) {
-        Optional<Patient> existingPatientOpt = patientRepository.findByPhoneAndActiveTrue(registrationDTO.getPhone());
+        List<Patient> existingPatients = patientRepository.findByPhoneAndActiveTrue(registrationDTO.getPhone());
         
         Patient patient;
-        if (existingPatientOpt.isPresent()) {
-            patient = existingPatientOpt.get();
+        if (!existingPatients.isEmpty()) {
+            patient = existingPatients.get(0);
         } else {
             patient = new Patient();
             patient.setPatientId(generatePatientId());

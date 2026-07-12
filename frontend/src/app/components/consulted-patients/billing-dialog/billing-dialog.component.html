@@ -7,7 +7,14 @@
     </div>
     
     <form [formGroup]="billForm" class="bill-form">
-      <div class="fees-section">
+      <div style="margin-bottom: 20px;">
+        <mat-radio-group formControlName="printType" color="primary">
+          <mat-radio-button value="both" style="margin-right: 15px;">Treatment & Prescription</mat-radio-button>
+          <mat-radio-button value="medicinesOnly">Only Medicines Prescription</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class="fees-section" *ngIf="billForm.get('printType')?.value === 'both'">
         <h3>Charges</h3>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Consultation Fee (Rs)*</mat-label>
@@ -16,9 +23,12 @@
         
         <div class="calculated-info" *ngIf="treatmentDetails.length > 0" style="margin-bottom: 15px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px; background-color: #f9f9f9;">
           <h4 style="margin-top: 0; margin-bottom: 8px; color: #153c61; font-size: 14px;">Treatment Charges</h4>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 14px;" *ngFor="let t of treatmentDetails">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 14px; align-items: center;" *ngFor="let t of treatmentDetails; let i = index">
             <span>{{t.treatmentName}}</span>
-            <span>Rs. {{t.cost}}</span>
+            <mat-form-field appearance="outline" style="width: 120px; margin-bottom: -15px;">
+              <span matPrefix>Rs. &nbsp;</span>
+              <input matInput type="number" [(ngModel)]="t.cost" (ngModelChange)="calculateTotal()" [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; font-weight: bold; color: #2c3e50; font-size: 14px;">
             <span>Total Treatment Charges</span>
@@ -32,15 +42,15 @@
         </mat-form-field>
       </div>
 
-      <div class="total-section">
+      <div class="total-section" *ngIf="billForm.get('printType')?.value === 'both'">
         <h3>Total Amount: Rs. {{totalAmount}}</h3>
       </div>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="billForm.invalid" (click)="saveBill()">
-      <mat-icon>save</mat-icon> Save & Print Bill
+    <button mat-raised-button color="primary" [disabled]="billForm.invalid && billForm.get('printType')?.value === 'both'" (click)="saveBill()">
+      <mat-icon>print</mat-icon> {{ billForm.get('printType')?.value === 'both' ? 'Save & Print Bill' : 'Print Prescription' }}
     </button>
   </mat-dialog-actions>
 </div>
@@ -64,6 +74,7 @@
     </div>
   </div>
 
+  <ng-container *ngIf="billForm.get('printType')?.value === 'both'">
   <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
     <thead>
       <tr style="border-bottom: 1px solid #ccc; text-align: left;">
@@ -110,8 +121,9 @@
       <p style="margin: 3px 0;"><strong>Amount Paid:</strong> {{totalAmount}}</p>
     </div>
   </div>
+  </ng-container>
 
-  <div class="print-medicines" *ngIf="medicineDetails.length > 0" style="font-size: 12px; margin-top: 15px;">
+  <div class="print-medicines" *ngIf="medicineDetails.length > 0 || billForm.get('printType')?.value === 'medicinesOnly'" style="font-size: 12px; margin-top: 15px;">
     <h4 style="margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;">Prescribed Medicines</h4>
     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
       <thead>

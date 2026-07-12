@@ -15,6 +15,7 @@
             <th>Visit ID</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Medical Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +23,7 @@
             <td>{{ visit.visitId }}</td>
             <td>{{ visit.visitDate | date:'shortDate' }}</td>
             <td>{{ visit.visitStatus || visit.status }}</td>
+            <td>{{ visit.notes || visit.chiefComplaint || '-' }}</td>
           </tr>
         </tbody>
       </table>

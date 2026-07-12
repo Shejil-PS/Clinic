@@ -84,10 +84,12 @@ public class PatientService {
         return patientMapper.toDto(patient);
     }
     
-    public PatientDTO getPatientByPhone(String phone) {
-        Patient patient = patientRepository.findByPhoneAndActiveTrue(phone)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with phone number: " + phone));
-        return patientMapper.toDto(patient);
+    public List<PatientDTO> getPatientByPhone(String phone) {
+        List<Patient> patients = patientRepository.findByPhoneAndActiveTrue(phone);
+        if (patients.isEmpty()) {
+            throw new ResourceNotFoundException("No patients found with phone number: " + phone);
+        }
+        return patients.stream().map(patientMapper::toDto).collect(Collectors.toList());
     }
     
     public PatientProfileDTO getPatientProfile(String patientId) {
@@ -101,8 +103,8 @@ public class PatientService {
         
         LocalDate today = LocalDate.now();
         for (Visit visit : allVisits) {
-            if ("WAITING".equals(visit.getStatus()) || (visit.getVisitDate() != null && visit.getVisitDate().toLocalDate().equals(today))) {
-                currentVisit = visit; // Or the most recent waiting visit
+            if ("WAITING".equals(visit.getStatus())) {
+                currentVisit = visit; // The active waiting visit
             } else {
                 previousVisits.add(visit);
             }

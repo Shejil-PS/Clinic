@@ -50,7 +50,7 @@ public class PatientController {
     }
     
     @GetMapping("/phone/{phone}")
-    public ResponseEntity<PatientDTO> getPatientByPhone(@PathVariable String phone) {
+    public ResponseEntity<java.util.List<PatientDTO>> getPatientByPhone(@PathVariable String phone) {
         return ResponseEntity.ok(patientService.getPatientByPhone(phone));
     }
     

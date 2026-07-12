@@ -36,4 +36,9 @@ public class BillController {
             @RequestParam String status) {
         return ResponseEntity.ok(billService.updatePaymentStatus(id, status));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BillDTO> updateBill(@PathVariable String id, @RequestBody BillDTO billDTO) {
+        return ResponseEntity.ok(billService.updateBill(id, billDTO));
+    }
 }

@@ -22,9 +22,6 @@ public class TreatmentMasterDTO {
     private String treatmentName;
     
     private String description;
-    
-    @NotNull(message = "Cost is required")
-    private Double cost;
 
     @Builder.Default
     private Boolean active = true;

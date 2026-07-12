@@ -17,7 +17,7 @@ export class RegistrationComponent {
   searchAttempted: boolean = false;
   
   patientFound: boolean = false;
-  existingPatient: Patient | null = null;
+  existingPatients: Patient[] = [];
   
   isNewPatient: boolean = false;
   registrationForm: FormGroup;
@@ -44,9 +44,14 @@ export class RegistrationComponent {
     this.searchAttempted = true;
     
     this.consultationService.searchPatientByPhone(this.searchPhone).subscribe({
-      next: (patient) => {
-        this.patientFound = true;
-        this.existingPatient = patient;
+      next: (patients) => {
+        if (patients && patients.length > 0) {
+          this.patientFound = true;
+          this.existingPatients = patients;
+        } else {
+          this.patientFound = false;
+          this.existingPatients = [];
+        }
         this.isLoading = false;
       },
       error: (err) => {
@@ -69,7 +74,7 @@ export class RegistrationComponent {
     this.searchPhone = '';
     this.searchAttempted = false;
     this.patientFound = false;
-    this.existingPatient = null;
+    this.existingPatients = [];
     this.isNewPatient = false;
     this.registrationForm.reset();
   }
@@ -121,86 +126,68 @@ export class RegistrationComponent {
   
   exportAllPatientsToCsv() {
     this.isExporting = true;
-    this.snackBar.open('Fetching all patients and their history for export...', 'Close', { duration: 3000 });
+    this.snackBar.open('Fetching all patients for export...', 'Close', { duration: 3000 });
     
     this.consultationService.getAllPatients().subscribe({
-      next: (patients) => {
+      next: async (patients) => {
         if (!patients || patients.length === 0) {
           this.snackBar.open('No patients found in database.', 'Close', { duration: 3000 });
           this.isExporting = false;
           return;
         }
 
-        // Fetch profile for all patients to get history
-        const profileRequests = patients.map(p => this.consultationService.getPatientProfile(p.patientId!));
+        const csvRows = [];
+        // Headers
+        csvRows.push(['Patient ID', 'Full Name', 'Phone', 'Age', 'Gender', 'Address'].join(','));
         
-        forkJoin(profileRequests).subscribe({
-          next: (profiles) => {
-            const csvRows = [];
-            // Headers
-            csvRows.push(['Patient ID', 'Full Name', 'Phone', 'Age', 'Gender', 'Address', 'History'].join(','));
-            
-            // Rows
-            for (let i = 0; i < patients.length; i++) {
-              const p = patients[i];
-              const profile = profiles[i];
-              
-              // Format History
-              let historyString = '';
-              const visitsCount = profile.previousVisits ? profile.previousVisits.length : 0;
-              historyString += `Visits: ${visitsCount}`;
-              
-              if (profile.treatmentHistory && profile.treatmentHistory.length > 0) {
-                const treatments = profile.treatmentHistory.map((t: any) => t.treatmentName).join(', ');
-                historyString += ` | Treatments: ${treatments}`;
-              }
-              
-              if (profile.prescriptionHistory && profile.prescriptionHistory.length > 0) {
-                const medicines: string[] = [];
-                profile.prescriptionHistory.forEach((presc: any) => {
-                  if (presc.medicineList) {
-                    presc.medicineList.forEach((med: any) => {
-                      medicines.push(med.medicineName);
-                    });
-                  }
-                });
-                if (medicines.length > 0) {
-                  historyString += ` | Medicines: ${medicines.join(', ')}`;
-                }
-              }
-
-              const values = [
-                p.patientId,
-                `"${p.fullName}"`,
-                p.phone,
-                p.age,
-                p.gender,
-                `"${p.address || ''}"`,
-                `"${historyString}"`
-              ];
-              csvRows.push(values.join(','));
-            }
-            
-            const csvString = csvRows.join('\n');
+        // Rows
+        for (let i = 0; i < patients.length; i++) {
+          const p = patients[i];
+          const values = [
+            p.patientId,
+            `"${p.fullName}"`,
+            p.phone,
+            p.age,
+            p.gender,
+            `"${p.address || ''}"`
+          ];
+          csvRows.push(values.join(','));
+        }
+        
+        const csvString = csvRows.join('\n');
+        
+        try {
+          if ('showSaveFilePicker' in window) {
+            const handle = await (window as any).showSaveFilePicker({
+              suggestedName: 'all_patients.csv',
+              types: [{
+                description: 'CSV File',
+                accept: {'text/csv': ['.csv']}
+              }]
+            });
+            const writable = await handle.createWritable();
+            await writable.write(csvString);
+            await writable.close();
+          } else {
+            // Fallback for older browsers
             const blob = new Blob([csvString], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
             a.setAttribute('hidden', '');
             a.setAttribute('href', url);
-            a.setAttribute('download', `all_patients_with_history_${new Date().toISOString().split('T')[0]}.csv`);
+            a.setAttribute('download', 'all_patients.csv');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
-            this.snackBar.open(`Exported ${patients.length} patients successfully!`, 'Close', { duration: 3000, panelClass: 'success-snackbar' });
-            this.isExporting = false;
-          },
-          error: () => {
-            this.showError('Failed to fetch patient histories for export');
-            this.isExporting = false;
           }
-        });
+          this.snackBar.open(`Exported ${patients.length} patients successfully!`, 'Close', { duration: 3000, panelClass: 'success-snackbar' });
+        } catch (err: any) {
+          if (err.name !== 'AbortError') {
+            this.showError('Export failed: ' + err.message);
+          }
+        } finally {
+          this.isExporting = false;
+        }
       },
       error: () => {
         this.showError('Failed to fetch patients for export');
