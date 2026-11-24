@@ -14,6 +14,8 @@ public interface PatientRepository extends MongoRepository<Patient, String> {
 
     Optional<Patient> findByPatientIdAndActiveTrue(String patientId);
     
+    java.util.List<Patient> findByPatientIdInAndActiveTrue(java.util.Collection<String> patientIds);
+    
     Optional<Patient> findByIdAndActiveTrue(String id);
     
     java.util.List<Patient> findByPhoneAndActiveTrue(String phone);

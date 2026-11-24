@@ -87,7 +87,7 @@ public class PatientService {
     public List<PatientDTO> getPatientByPhone(String phone) {
         List<Patient> patients = patientRepository.findByPhoneAndActiveTrue(phone);
         if (patients.isEmpty()) {
-            throw new ResourceNotFoundException("No patients found with phone number: " + phone);
+            return java.util.Collections.emptyList();
         }
         return patients.stream().map(patientMapper::toDto).collect(Collectors.toList());
     }

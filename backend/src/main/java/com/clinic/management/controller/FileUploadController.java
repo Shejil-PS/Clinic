@@ -11,11 +11,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/files")
 public class FileUploadController {
+
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
+            ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".pdf"
+    );
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
     private final Path fileStorageLocation;
 
@@ -30,12 +36,24 @@ public class FileUploadController {
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Cannot upload empty file.");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("File size exceeds maximum allowed limit of 20MB.");
+        }
+
         String originalFileName = file.getOriginalFilename();
         String fileExtension = "";
         if (originalFileName != null && originalFileName.contains(".")) {
-            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
         }
-        
+
+        if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
+            throw new IllegalArgumentException("Unsupported file format: " + fileExtension + ". Allowed formats: " + ALLOWED_EXTENSIONS);
+        }
+
         String fileName = UUID.randomUUID().toString() + fileExtension;
 
         try {

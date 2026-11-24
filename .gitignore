@@ -1,0 +1,42 @@
+# Compiled class and jar files
+**/target/
+**/dist/
+**/out-tsc/
+**/*.class
+**/*.jar
+!ClinicServer/clinic-management.jar
+
+# Dependencies
+**/node_modules/
+**/.pnpm-store/
+
+# Logs
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files & directories
+temp/
+tmp/
+**/temp/
+**/tmp/
+
+# IDE and Editor files
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+

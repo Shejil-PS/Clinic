@@ -14,6 +14,7 @@ import { Visit } from '../../core/models/patient.model';
 export class ConsultationScreenComponent implements OnInit {
   visitId!: string;
   visit!: Visit;
+  patient: any = null;
   isLoading = false;
 
   chiefComplaint: string = '';
@@ -86,7 +87,17 @@ export class ConsultationScreenComponent implements OnInit {
 
   loadVisit() {
     this.consultationService.getVisitById(this.visitId).subscribe({
-      next: (res) => this.visit = res,
+      next: (res) => {
+        this.visit = res;
+        if (res && res.patientId) {
+          this.consultationService.getPatientProfile(res.patientId).subscribe({
+            next: (profile) => {
+              this.patient = profile?.patientInfo || profile;
+            },
+            error: (err) => console.warn('Could not fetch patient profile', err)
+          });
+        }
+      },
       error: () => this.showError('Failed to load visit details')
     });
   }

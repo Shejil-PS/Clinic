@@ -38,6 +38,23 @@ public class MedicineController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<MedicineDTO>> searchMedicinesAlias(
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "term", required = false) String term,
+            @RequestParam(required = false) Boolean availableOnly,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "medicineName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        String effectiveTerm = (searchTerm != null && !searchTerm.trim().isEmpty()) ? searchTerm : term;
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(medicineService.searchMedicines(effectiveTerm, availableOnly, pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MedicineDTO> getMedicineById(@PathVariable String id) {
         return ResponseEntity.ok(medicineService.getMedicineById(id));
@@ -45,16 +62,18 @@ public class MedicineController {
 
     @GetMapping
     public ResponseEntity<Page<MedicineDTO>> searchMedicines(
-            @RequestParam(required = false) String term,
+            @RequestParam(name = "term", required = false) String term,
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
             @RequestParam(required = false) Boolean availableOnly,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "medicineName") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
+        String effectiveTerm = (term != null && !term.trim().isEmpty()) ? term : searchTerm;
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(medicineService.searchMedicines(term, availableOnly, pageable));
+        return ResponseEntity.ok(medicineService.searchMedicines(effectiveTerm, availableOnly, pageable));
     }
 }

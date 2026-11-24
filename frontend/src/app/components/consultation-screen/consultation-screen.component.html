@@ -16,9 +16,17 @@
     <mat-card class="glass-card info-card">
       <h2>Patient Information</h2>
       <p><strong>ID:</strong> {{visit.patientId}}</p>
-      <!-- We would ideally fetch full patient details here. For now just ID. -->
+      <p *ngIf="patient?.fullName"><strong>Name:</strong> {{patient.fullName}}</p>
+      <p *ngIf="patient?.age || patient?.gender">
+        <strong>Age / Gender:</strong> 
+        {{patient?.age ? patient.age + ' yrs' : ''}} 
+        {{patient?.gender ? '(' + patient.gender + ')' : ''}}
+      </p>
+      <p *ngIf="patient?.phone"><strong>Phone:</strong> {{patient.phone}}</p>
+      <p *ngIf="patient?.allergies" style="color: #c0392b;"><strong>Allergies:</strong> {{patient.allergies}}</p>
+      <p *ngIf="patient?.medicalHistory"><strong>Medical History:</strong> {{patient.medicalHistory}}</p>
       <p><strong>Visit Status:</strong> <span class="status-badge" [ngClass]="visit.status?.toLowerCase()">{{visit.status}}</span></p>
-      <p><strong>Date:</strong> {{visit.visitDate}}</p>
+      <p><strong>Date:</strong> {{visit.visitDate | date:'medium'}}</p>
     </mat-card>
 
     <!-- Medical Notes (Vitals/Chief Complaint) -->

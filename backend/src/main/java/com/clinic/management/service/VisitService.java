@@ -27,7 +27,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -168,22 +173,36 @@ public class VisitService {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
         
-        return visitRepository.findByVisitDateBetween(startOfDay, endOfDay, pageable)
-                .map(visit -> {
-                    VisitQueueDTO queueDTO = new VisitQueueDTO();
-                    queueDTO.setVisitId(visit.getVisitId());
-                    queueDTO.setPatientId(visit.getPatientId());
-                    queueDTO.setRegistrationTime(visit.getCreatedAt());
-                    queueDTO.setVisitStatus(visit.getStatus());
+        Page<Visit> visitsPage = visitRepository.findByVisitDateBetween(startOfDay, endOfDay, pageable);
+        if (visitsPage.isEmpty()) {
+            return visitsPage.map(v -> new VisitQueueDTO());
+        }
+
+        // Collect all unique patientIds for this page
+        Set<String> patientIds = visitsPage.getContent().stream()
+                .map(Visit::getPatientId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        // Batch fetch all patients in a single database query
+        Map<String, Patient> patientMap = patientRepository.findByPatientIdInAndActiveTrue(patientIds).stream()
+                .collect(Collectors.toMap(Patient::getPatientId, Function.identity(), (p1, p2) -> p1));
+
+        return visitsPage.map(visit -> {
+            VisitQueueDTO queueDTO = new VisitQueueDTO();
+            queueDTO.setVisitId(visit.getVisitId());
+            queueDTO.setPatientId(visit.getPatientId());
+            queueDTO.setRegistrationTime(visit.getCreatedAt());
+            queueDTO.setVisitStatus(visit.getStatus());
+            
+            Patient patient = patientMap.get(visit.getPatientId());
+            if (patient != null) {
+                queueDTO.setPatientName(patient.getFullName());
+                queueDTO.setPhone(patient.getPhone());
+            }
                     
-                    patientRepository.findByPatientIdAndActiveTrue(visit.getPatientId())
-                            .ifPresent(patient -> {
-                                queueDTO.setPatientName(patient.getFullName());
-                                queueDTO.setPhone(patient.getPhone());
-                            });
-                            
-                    return queueDTO;
-                });
+            return queueDTO;
+        });
     }
 
     @Transactional
